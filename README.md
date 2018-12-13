@@ -1,2 +1,3 @@
 # mooda-gui
-Graphical interface to use the mooda functionalities.
+
+Graphical User Interface to use the mooda functionalities.
