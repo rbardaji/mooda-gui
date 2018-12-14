@@ -1,24 +1,28 @@
+"""Module that contains the layout and principal methods of the main window of the GUI"""
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+
 import os
 from PyQt5.QtWidgets import (QMainWindow, QAction, qApp, QSplitter,
                              QFileDialog, QMenu)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QDateTime, Qt
-from mooda_gui.widgets import (TextFrame, PlotSplitter, EgimDownloaderFrame)
 from mooda import WaterFrame
+from mooda_gui.widgets import (TextFrame, PlotSplitter, EgimDownloaderFrame)
 
 
 class MOODA(QMainWindow):
+    """It is the main window of the GUI"""
 
     def __init__(self):
         super().__init__()
 
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
+    def init_ui(self):
+        """Layout of the main window"""
 
-        path_icon = str(
-            os.path.dirname(os.path.abspath(__file__))) + \
-                    "\\..\\icon\\"
+        path_icon = str(os.path.dirname(os.path.abspath(__file__))) + "\\..\\icon\\"
         # Status bar
         self.statusbar = self.statusBar()
         self.statusbar.showMessage('Ready')
@@ -28,226 +32,191 @@ class MOODA(QMainWindow):
         self.datalog.msg2Statusbar[str].connect(self.statusbar.showMessage)
 
         # Plot Area
-        self.plotArea = PlotSplitter()
-        self.plotArea.msg2Statusbar[str].connect(self.statusbar.showMessage)
-        self.plotArea.msg2TextArea[str].connect(self.datalog.write)
+        self.plot_area = PlotSplitter()
+        self.plot_area.msg2Statusbar[str].connect(self.statusbar.showMessage)
+        self.plot_area.msg2TextArea[str].connect(self.datalog.write)
 
         # EGIM Downloader
-        self.egimDownloader = EgimDownloaderFrame()
-        self.egimDownloader.msg2Statusbar[str].connect(
-            self.statusbar.showMessage)
-        self.egimDownloader.wf2plotSplitter[WaterFrame].connect(
-            self.openFile)
+        self.egim_downloader = EgimDownloaderFrame()
+        self.egim_downloader.msg2Statusbar[str].connect(self.statusbar.showMessage)
+        self.egim_downloader.wf2plotSplitter[WaterFrame].connect(self.open_file)
 
         # Menu bar
         menubar = self.menuBar()
         # - Menu File -
-        fileMenu = menubar.addMenu('&File')
+        file_menu = menubar.addMenu('&File')
         # -- New project --
-        newAct = QAction(QIcon(
-            path_icon+'\\new.png'),
-                         '&New project', self)
-        newAct.setShortcut('Ctrl+N')
-        newAct.setStatusTip('Clear the actual data frame to start a new one')
-        newAct.triggered.connect(self.plotArea.newWaterFrame)
-        fileMenu.addAction(newAct)
+        new_act = QAction(QIcon(path_icon+'\\new.png'), '&New project', self)
+        new_act.setShortcut('Ctrl+N')
+        new_act.setStatusTip('Clear the actual data frame to start a new one')
+        new_act.triggered.connect(self.plot_area.newWaterFrame)
+        file_menu.addAction(new_act)
         # -- Open --
-        openAct = QAction(QIcon(
-            path_icon+'\\open.svg'),
-                          '&Open', self)
-        openAct.setShortcut('Ctrl+O')
-        openAct.setStatusTip('Open data files for analyzing')
-        openAct.triggered.connect(self.openFile)
-        fileMenu.addAction(openAct)
+        open_act = QAction(QIcon(path_icon+'\\open.svg'), '&Open', self)
+        open_act.setShortcut('Ctrl+O')
+        open_act.setStatusTip('Open data files for analyzing')
+        open_act.triggered.connect(self.open_file)
+        file_menu.addAction(open_act)
         # -- Add --
-        addAct = QAction(QIcon(
-            path_icon+'\\add.svg'),
-                         '&Add', self)
-        addAct.setStatusTip('Add data to the current dataset')
-        addAct.triggered.connect(lambda: self.openFile(concat=True))
-        fileMenu.addAction(addAct)
+        add_act = QAction(QIcon(path_icon+'\\add.svg'), '&Add', self)
+        add_act.setStatusTip('Add data to the current dataset')
+        add_act.triggered.connect(lambda: self.open_file(concat=True))
+        file_menu.addAction(add_act)
         # --- EGIM downloader ---
-        downloaderAct = QAction(QIcon(
-            path_icon+'\\cloud.png'),
-                                '&EGIM downloader', self)
-        downloaderAct.setStatusTip(
-            'Open and analyze data from EMSODEV servers')
-        downloaderAct.triggered.connect(self.openEgimDownloader)
-        fileMenu.addAction(downloaderAct)
+        downloader_act = QAction(QIcon(path_icon+'\\cloud.png'), '&EGIM downloader', self)
+        downloader_act.setStatusTip('Open and analyze data from EMSODEV servers')
+        downloader_act.triggered.connect(self.open_egim_downloader)
+        file_menu.addAction(downloader_act)
         # --- Separator ---
-        fileMenu.addSeparator()
+        file_menu.addSeparator()
         # --- Save as ---
-        self.saveAct = QAction(QIcon(
-            path_icon+'\\save.png'),
-                               '&Save as...', self)
-        self.saveAct.setShortcut('Ctrl+S')
-        self.saveAct.setStatusTip('Save current data into a pickle')
-        self.saveAct.triggered.connect(self.saveFile)
-        fileMenu.addAction(self.saveAct)
+        self.save_act = QAction(QIcon(path_icon+'\\save.png'), '&Save as...', self)
+        self.save_act.setShortcut('Ctrl+S')
+        self.save_act.setStatusTip('Save current data into a pickle')
+        self.save_act.triggered.connect(self.saveFile)
+        file_menu.addAction(self.save_act)
         # --- Separator ---
-        fileMenu.addSeparator()
+        file_menu.addSeparator()
         # -- Exit --
-        exitAct = QAction(QIcon(
-            path_icon+'\\exit.svg'),
-                          'E&xit', self)
-        exitAct.setShortcut('Ctrl+Q')
-        exitAct.setStatusTip('Exit application')
-        exitAct.triggered.connect(qApp.quit)
-        fileMenu.addAction(exitAct)
+        exit_act = QAction(QIcon(path_icon+'\\exit.svg'), 'E&xit', self)
+        exit_act.setShortcut('Ctrl+Q')
+        exit_act.setStatusTip('Exit application')
+        exit_act.triggered.connect(qApp.quit)
+        file_menu.addAction(exit_act)
 
         # - Menu Data -
-        dataMenu = menubar.addMenu('&Data')
+        data_menu = menubar.addMenu('&Data')
         # -- Submenu Quality control --
-        qcMenu = QMenu('&QC', self)
+        qc_menu = QMenu('&QC', self)
         # --- Auto QC ---
-        self.qcAutoAct = QAction(QIcon(
-            path_icon+'\\qc.png'),
-                                 '&Auto', self)
-        self.qcAutoAct.triggered.connect(self.plotArea.qcWidget.apply)
-        qcMenu.addAction(self.qcAutoAct)
+        self.qc_auto_act = QAction(QIcon(path_icon+'\\qc.png'), '&Auto', self)
+        self.qc_auto_act.triggered.connect(self.plot_area.qcWidget.apply)
+        qc_menu.addAction(self.qc_auto_act)
         # --- Preferences QC ---
-        self.qcPreferencesAct = QAction('&Preferences...', self)
-        self.qcPreferencesAct.triggered.connect(self.plotArea.qcWidget.show)
-        qcMenu.addAction(self.qcPreferencesAct)
-        dataMenu.addMenu(qcMenu)
+        self.qc_preferences_act = QAction('&Preferences...', self)
+        self.qc_preferences_act.triggered.connect(self.plot_area.qcWidget.show)
+        qc_menu.addAction(self.qc_preferences_act)
+        data_menu.addMenu(qc_menu)
         # -- Delete parameters --
-        self.deleteAct = QAction(QIcon(
-            path_icon+'\\delete.png'),
-                                 '&Remove parameters',
-                                 self)
-        self.deleteAct.triggered.connect(self.plotArea.dropWidget.show)
-        dataMenu.addAction(self.deleteAct)
+        self.delete_act = QAction(QIcon(path_icon+'\\delete.png'), '&Remove parameters', self)
+        self.delete_act.triggered.connect(self.plot_area.drop_widget.show)
+        data_menu.addAction(self.delete_act)
         # -- Rename parameters --
-        self.renameAct = QAction(QIcon(
-            path_icon+'\\rename.png'),
-                                 'Re&name parameters',
-                                 self)
-        self.renameAct.triggered.connect(self.plotArea.renameWidget.show)
-        dataMenu.addAction(self.renameAct)
+        self.rename_act = QAction(QIcon(path_icon+'\\rename.png'), 'Re&name parameters', self)
+        self.rename_act.triggered.connect(self.plot_area.renameWidget.show)
+        data_menu.addAction(self.rename_act)
         # -- Resample data --
-        self.resampleAct = QAction(QIcon(
-            path_icon+'\\resample.png'),
-                                   'Resam&ple data',
-                                   self)
-        self.resampleAct.triggered.connect(self.plotArea.resampleWidget.show)
-        dataMenu.addAction(self.resampleAct)
+        self.resample_act = QAction(QIcon(path_icon+'\\resample.png'), 'Resam&ple data', self)
+        self.resample_act.triggered.connect(self.plot_area.resampleWidget.show)
+        data_menu.addAction(self.resample_act)
         # -- Slice data --
-        self.sliceAct = QAction(QIcon(
-            path_icon+'\\slice.png'),
-                                '&Slice data', self)
-        self.sliceAct.triggered.connect(self.plotArea.sliceWidget.show)
-        dataMenu.addAction(self.sliceAct)
+        self.slice_act = QAction(QIcon(path_icon+'\\slice.png'), '&Slice data', self)
+        self.slice_act.triggered.connect(self.plot_area.sliceWidget.show)
+        data_menu.addAction(self.slice_act)
 
         # - Menu View -
-        viewMenu = menubar.addMenu('&View')
+        view_menu = menubar.addMenu('&View')
         # -- Datalog --
-        datalogAct = QAction(QIcon(
-            path_icon+'\\log.png'),
-                             '&Datalog', self)
-        datalogAct.setShortcut('F1')
-        datalogAct.setStatusTip('Show the text area')
-        datalogAct.triggered.connect(
+        datalog_act = QAction(QIcon(path_icon+'\\log.png'), '&Datalog', self)
+        datalog_act.setShortcut('F1')
+        datalog_act.setStatusTip('Show the text area')
+        datalog_act.triggered.connect(
             lambda: self.datalog.setVisible(not self.datalog.isVisible()))
-        viewMenu.addAction(datalogAct)
+        view_menu.addAction(datalog_act)
         # -- Metadata --
-        self.metadataAct = QAction(QIcon(
-            path_icon+'\\metadata.png'),
-                                   '&Metadata', self)
-        self.metadataAct.setShortcut('F2')
-        self.metadataAct.setStatusTip("Show metadata area")
-        self.metadataAct.triggered.connect(
-            lambda: self.plotArea.vMetadataWidget.setVisible(
-                not self.plotArea.vMetadataWidget.isVisible()))
-        viewMenu.addAction(self.metadataAct)
+        self.metadata_act = QAction(QIcon(path_icon+'\\metadata.png'), '&Metadata', self)
+        self.metadata_act.setShortcut('F2')
+        self.metadata_act.setStatusTip("Show metadata area")
+        self.metadata_act.triggered.connect(
+            lambda: self.plot_area.vMetadataWidget.setVisible(
+                not self.plot_area.vMetadataWidget.isVisible()))
+        view_menu.addAction(self.metadata_act)
         # -- Data --
-        self.dataViewAct = QAction(QIcon(
-            path_icon+'\\graph.png'),
-                                   '&Parameters', self)
-        self.dataViewAct.setShortcut('F3')
-        self.dataViewAct.setStatusTip("Show data area")
-        self.dataViewAct.triggered.connect(
-            lambda: self.plotArea.vDataSplitter.setVisible(
-                not self.plotArea.vDataSplitter.isVisible()))
-        viewMenu.addAction(self.dataViewAct)
+        self.data_view_act = QAction(QIcon(path_icon+'\\graph.png'), '&Parameters', self)
+        self.data_view_act.setShortcut('F3')
+        self.data_view_act.setStatusTip("Show data area")
+        self.data_view_act.triggered.connect(
+            lambda: self.plot_area.vDataSplitter.setVisible(
+                not self.plot_area.vDataSplitter.isVisible()))
+        view_menu.addAction(self.data_view_act)
 
         # Splitter
         splitter = QSplitter(Qt.Vertical)
-        splitter.addWidget(self.egimDownloader)
-        splitter.addWidget(self.plotArea)
+        splitter.addWidget(self.egim_downloader)
+        splitter.addWidget(self.plot_area)
         splitter.addWidget(self.datalog)
 
         # Main Window
         # self.setGeometry(300, 300, 300, 220)
         self.setWindowTitle('MOODA')
-        self.setWindowIcon(QIcon(
-            path_icon+'\\mooda.png'))
+        self.setWindowIcon(QIcon(path_icon+'\\mooda.png'))
         self.setCentralWidget(splitter)
         self.show()
 
         # Initial configuration
         # - Hide components
-        self.egimDownloader.hide()
+        self.egim_downloader.hide()
         self.datalog.hide()
-        self.plotArea.hide()
+        self.plot_area.hide()
         # - Write date and time into 'text'
         datetime_ = QDateTime.currentDateTime()
         self.datalog.write(datetime_.toString(Qt.DefaultLocaleLongDate))
         # - Disable actions from menus
-        self.deleteAct.setEnabled(False)
-        self.saveAct.setEnabled(False)
-        self.qcAutoAct.setEnabled(False)
-        self.qcPreferencesAct.setEnabled(False)
-        self.metadataAct.setEnabled(False)
-        self.dataViewAct.setEnabled(False)
-        self.renameAct.setEnabled(False)
-        self.resampleAct.setEnabled(False)
-        self.sliceAct.setEnabled(False)
+        self.delete_act.setEnabled(False)
+        self.save_act.setEnabled(False)
+        self.qc_auto_act.setEnabled(False)
+        self.qc_preferences_act.setEnabled(False)
+        self.metadata_act.setEnabled(False)
+        self.data_view_act.setEnabled(False)
+        self.rename_act.setEnabled(False)
+        self.resample_act.setEnabled(False)
+        self.slice_act.setEnabled(False)
 
-    def openEgimDownloader(self):
+    def open_egim_downloader(self):
         """It shows the EgimDownloaderFrame."""
-        self.egimDownloader.show()
-        if self.egimDownloader.egimList.count() == 0:
+        self.egim_downloader.show()
+        if self.egim_downloader.egimList.count() == 0:
             # New frame
-            self.egimDownloader.reload()
+            self.egim_downloader.reload()
 
-    def openFile(self, wf=None, concat=False):
+    def open_file(self, wf=None, concat=False):
         """
         It opens a QFileDialog and load the input file
         :param wf: WaterFrame object
         :param concat: It adds the new WaterFrame into the actual Dataframe
         """
         if wf:
-            fileName = wf
+            file_name = wf
         else:
             # Open the save file dialog
-            fileName, _ = QFileDialog.getOpenFileName(
+            file_name, _ = QFileDialog.getOpenFileName(
                 caption="Open data file", directory="",
                 filter="NetCDF (*.nc);;CSV (*.csv);;Pickle (*.pkl)")
 
         # Send the path to the PlotFrame to be opened
-        if fileName:
-            ok = self.plotArea.openData(fileName, concat)
+        if file_name:
+            ok = self.plot_area.openData(file_name, concat)
             if ok:
                 # Show plot area
-                self.plotArea.show()
+                self.plot_area.show()
                 # Enable actions
-                self.deleteAct.setEnabled(True)
-                self.saveAct.setEnabled(True)
-                self.metadataAct.setEnabled(True)
-                self.dataViewAct.setEnabled(True)
-                self.qcPreferencesAct.setEnabled(True)
-                self.qcAutoAct.setEnabled(True)
-                self.renameAct.setEnabled(True)
-                self.resampleAct.setEnabled(True)
-                self.sliceAct.setEnabled(True)
+                self.delete_act.setEnabled(True)
+                self.save_act.setEnabled(True)
+                self.metadata_act.setEnabled(True)
+                self.data_view_act.setEnabled(True)
+                self.qc_preferences_act.setEnabled(True)
+                self.qc_auto_act.setEnabled(True)
+                self.rename_act.setEnabled(True)
+                self.resample_act.setEnabled(True)
+                self.slice_act.setEnabled(True)
 
     def saveFile(self):
         """
-        It opens a QFileDialog and save current data
+        It opens a QFileDialog and save current data.
         """
         # Open the save file dialog
-        fileName, _ = QFileDialog.getSaveFileName(
+        file_name, _ = QFileDialog.getSaveFileName(
             caption="Open data file", directory="",
             filter="Pickle (*.pkl);;CSV (*.csv)")
-        if fileName:
-            self.plotArea.saveData(fileName)
+        if file_name:
+            self.plot_area.saveData(file_name)

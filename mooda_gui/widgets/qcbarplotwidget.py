@@ -1,3 +1,8 @@
+"""Module that creates a QWidget to show the qcbarplot() of mooda"""
+
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+
 import os
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg \
@@ -14,14 +19,14 @@ class QCBarPlotWidget(QWidget):
     Pyqt5 widget to show plots. It is used in PlotSplitter.
     """
 
-    def __init__(self, wf):
+    def __init__(self, wf):  # pylint: disable=C0103
         """
         :param wf: inWater WaterFrame object
         """
         super().__init__()
 
         # Instance variables
-        self.wf = wf
+        self.wf = wf  # pylint: disable=C0103
         self.name = "QC"
         self.key = "all"
 
@@ -32,43 +37,42 @@ class QCBarPlotWidget(QWidget):
         plt.tight_layout()
         sms.despine()
 
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
-        path_icon = str(
-            os.path.dirname(os.path.abspath(__file__))) + \
-                    "\\..\\icon\\"
+    def init_ui(self):
+        """Layout and connections"""
+
+        path_icon = str(os.path.dirname(os.path.abspath(__file__))) + "\\..\\icon\\"
         # Canvas
-        self.plotCanvas = FigureCanvas(self.fig)
-        self.plotCanvas.draw()
+        self.plot_canvas = FigureCanvas(self.fig)
+        self.plot_canvas.draw()
 
         # Matplotlib toolbar
-        plotToolbar = NavigationToolbar(self.plotCanvas, self)
+        plot_toolbar = NavigationToolbar(self.plot_canvas, self)
 
         # Custom Toolbar
-        actionToolbar = QToolBar(self)
+        action_toolbar = QToolBar(self)
         # - Actions -
-        applyAct = QAction(QIcon(path_icon+"refresh.png"),
-                           'Refresh', self)
-        applyAct.triggered.connect(self.refreshPlot)
+        apply_act = QAction(QIcon(path_icon+"refresh.png"), 'Refresh', self)
+        apply_act.triggered.connect(self.refreshPlot)
         closeAct = QAction(QIcon(path_icon+"close.png"),
                            'Close', self)
         closeAct.triggered.connect(self.hide)
         # - Format -
-        actionToolbar.addAction(applyAct)
-        actionToolbar.addAction(closeAct)
+        action_toolbar.addAction(apply_act)
+        action_toolbar.addAction(closeAct)
 
         # Layout
         # - For the Widget
         vPlot = QVBoxLayout()
-        vPlot.addWidget(self.plotCanvas)
-        vPlot.addWidget(plotToolbar)
-        vPlot.addWidget(actionToolbar)
+        vPlot.addWidget(self.plot_canvas)
+        vPlot.addWidget(plot_toolbar)
+        vPlot.addWidget(action_toolbar)
         self.setLayout(vPlot)
 
     def refreshPlot(self):
         """
-        It refresh the plot according to the actions of the actionToolbar
+        It refresh the plot according to the actions of the action_toolbar
         :return:
         """
         # Remove previous axes from the figure

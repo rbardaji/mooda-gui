@@ -1,9 +1,12 @@
+"""Module to create a Widget"""
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+
 from PyQt5.QtWidgets import (QWidget, QLabel, QListWidget, QPushButton,
                              QVBoxLayout, QSplitter, QGroupBox, QRadioButton,
                              QAbstractItemView, QPlainTextEdit)
 from PyQt5.QtCore import pyqtSignal, Qt
 from mooda import WaterFrame
-from mooda.access import EGIM
 from mooda_gui.widgets import (DropWidget, QCWidget, RenameWidget, ResampleWidget, SliceWidget,
                                ScatterMatrixPlotWidget, QCPlotWidget, TSPlotWidget, QCBarPlotWidget,
                                SpectrogramPlotWidget)
@@ -24,36 +27,36 @@ class PlotSplitter(QSplitter):
         super().__init__()
 
         # Instance variables
-        self.wf = WaterFrame()
+        self.wf = WaterFrame()  # pylint: disable=C0103
         # List of PlotWidget, to control them in any case
-        self.plotWidgetList = []
+        self.plot_widget_list = []
 
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
+    def init_ui(self):
         """UI creator"""
 
         # Lists
-        self.dataList = QListWidget(self)
-        self.dataList.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.dataList.itemClicked.connect(self.dataListClick)
-        self.graphList = QListWidget(self)
-        self.graphList.itemClicked.connect(self.graphClick)
+        self.data_list = QListWidget(self)
+        self.data_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.data_list.itemClicked.connect(self.dataListClick)
+        self.graph_list = QListWidget(self)
+        self.graph_list.itemClicked.connect(self.graphClick)
 
         # PlainTextEdit
-        self.otherInfoPlainText = QPlainTextEdit(self)
-        self.metadataPlainText = QPlainTextEdit(self)
+        self.other_info_plain_text = QPlainTextEdit(self)
+        self.metadata_plain_text = QPlainTextEdit(self)
 
         # Labels
-        metadataLabel = QLabel("Metadata")
-        dataLabel = QLabel("Data")
-        graphLabel = QLabel("Graph")
-        infoLabel = QLabel("Other information")
+        metadata_label = QLabel("Metadata")
+        data_label = QLabel("Data")
+        graph_label = QLabel("Graph")
+        info_label = QLabel("Other information")
 
         # DropWidget
-        self.dropWidget = DropWidget()
-        self.dropWidget.list2drop[list, list, bool].connect(self.dropData)
-        self.dropWidget.hide()
+        self.drop_widget = DropWidget()
+        self.drop_widget.list2drop[list, list, bool].connect(self.dropData)
+        self.drop_widget.hide()
 
         # Group Box
         plotGroupBox = QGroupBox("Plot properties", self)
@@ -112,8 +115,8 @@ class PlotSplitter(QSplitter):
         parameterWidget = QWidget()
         # -- Layout
         vData = QVBoxLayout()
-        vData.addWidget(dataLabel)
-        vData.addWidget(self.dataList)
+        vData.addWidget(data_label)
+        vData.addWidget(self.data_list)
         vData.addWidget(plotGroupBox)
         vData.addWidget(plotButton)
         parameterWidget.setLayout(vData)
@@ -121,8 +124,8 @@ class PlotSplitter(QSplitter):
         graphWidget = QWidget()
         # -- Layout
         vGraph = QVBoxLayout()
-        vGraph.addWidget(graphLabel)
-        vGraph.addWidget(self.graphList)
+        vGraph.addWidget(graph_label)
+        vGraph.addWidget(self.graph_list)
         vGraph.addWidget(hideDataButton)
         graphWidget.setLayout(vGraph)
         # - Data splitter
@@ -132,10 +135,10 @@ class PlotSplitter(QSplitter):
         # Layouts
         # - Metadata -
         vMetadata = QVBoxLayout()
-        vMetadata.addWidget(metadataLabel)
-        vMetadata.addWidget(self.metadataPlainText)
-        vMetadata.addWidget(infoLabel)
-        vMetadata.addWidget(self.otherInfoPlainText)
+        vMetadata.addWidget(metadata_label)
+        vMetadata.addWidget(self.metadata_plain_text)
+        vMetadata.addWidget(info_label)
+        vMetadata.addWidget(self.other_info_plain_text)
         vMetadata.addWidget(hideMetadataButton)
         self.vMetadataWidget.setLayout(vMetadata)
 
@@ -145,7 +148,7 @@ class PlotSplitter(QSplitter):
         vActions = QVBoxLayout()
         vActions.addWidget(self.renameWidget)
         vActions.addWidget(self.resampleWidget)
-        vActions.addWidget(self.dropWidget)
+        vActions.addWidget(self.drop_widget)
         vActions.addWidget(self.sliceWidget)
         vActions.addStretch()
         vActionsWidget.setLayout(vActions)
@@ -165,7 +168,7 @@ class PlotSplitter(QSplitter):
         self.msg2Statusbar.emit("Making the figure")
 
         # Create key list
-        keys = [item.text() for item in self.dataList.selectedItems()]
+        keys = [item.text() for item in self.data_list.selectedItems()]
 
         # If nothing is selected, go out
         if not keys:
@@ -190,7 +193,7 @@ class PlotSplitter(QSplitter):
 
         # Check if plot is done
         new = True
-        for plotWidget in self.plotWidgetList:
+        for plotWidget in self.plot_widget_list:
             if plotWidget.name == name:
                 if ~plotWidget.isVisible():
                     plotWidget.refreshPlot()
@@ -210,7 +213,7 @@ class PlotSplitter(QSplitter):
                 plotWidget.msg2Statusbar[str].connect(self.msg2Statusbar.emit)
             self.addWidget(plotWidget)
             # Add the widget to the list
-            self.plotWidgetList.append(plotWidget)
+            self.plot_widget_list.append(plotWidget)
 
         self.msg2Statusbar.emit("Ready")
 
@@ -221,7 +224,7 @@ class PlotSplitter(QSplitter):
         self.msg2Statusbar.emit("Making the figure")
         # Check if the plot exists
         plotWidget = None
-        for plotWidget_ in self.plotWidgetList:
+        for plotWidget_ in self.plot_widget_list:
             if plotWidget_.name == "QC":
                 plotWidget = plotWidget_
                 plotWidget.wf = self.wf
@@ -233,7 +236,7 @@ class PlotSplitter(QSplitter):
             plotWidget = QCBarPlotWidget(wf=self.wf)
             self.addWidget(plotWidget)
             # Add the widget to the list
-            self.plotWidgetList.append(plotWidget)
+            self.plot_widget_list.append(plotWidget)
         self.msg2Statusbar.emit("Ready")
 
     def addSpectroPlot(self):
@@ -242,7 +245,7 @@ class PlotSplitter(QSplitter):
         self.msg2Statusbar.emit("Making the figure")
         # Check if the plot exists
         plotWidget = None
-        for plotWidget_ in self.plotWidgetList:
+        for plotWidget_ in self.plot_widget_list:
             if plotWidget_.name == "Spectrogram":
                 plotWidget = plotWidget_
                 plotWidget.wf = self.wf
@@ -253,7 +256,7 @@ class PlotSplitter(QSplitter):
             plotWidget = SpectrogramPlotWidget(wf=self.wf)
             self.addWidget(plotWidget)
             # Add the widget to the list
-            self.plotWidgetList.append(plotWidget)
+            self.plot_widget_list.append(plotWidget)
         self.msg2Statusbar.emit("Ready")
 
     def openData(self, path, concat=False):
@@ -283,12 +286,6 @@ class PlotSplitter(QSplitter):
                 ok = wf_new.from_netcdf(path)
             elif extension == "pkl":
                 ok = wf_new.from_pickle(path)
-            elif extension == "csv":
-                try:
-                    wf_new = EGIM.from_raw_csv("EMSO-Azores", path)
-                    ok = True
-                except:
-                    ok = False
             if ok:
                 # Check if we want actual data
                 if not concat:
@@ -300,7 +297,7 @@ class PlotSplitter(QSplitter):
                 self.addMetadata(self.wf.metadata)
                 # Add other information
                 self.otherInfoPlainText.setPlainText(repr(self.wf))
-                # Add data information into dataList
+                # Add data information into data_list
                 self.addData(self.wf.data)
                 # Plot QC
                 self.addQCBarPlot()
@@ -322,7 +319,7 @@ class PlotSplitter(QSplitter):
                 self.wf.clear()
             self.wf.concat(path)
 
-            # Add data information into dataList
+            # Add data information into data_list
             self.addData(self.wf.data)
             self.addMetadata(self.wf.metadata)
             # Plot QC
@@ -331,24 +328,24 @@ class PlotSplitter(QSplitter):
 
     def addMetadata(self, metadataDict):
         """
-        Add Metadata information into self.metadataPlainText
+        Add Metadata information into self.metadata_plain_text
         :param metadataDict: WaterFrame Metadata Dictionary
         """
         # Clear the list
-        self.metadataPlainText.clear()
+        self.metadata_plain_text.clear()
 
         items = []
         msg = "\nMetadata:"
         for key, value in metadataDict.items():
             items.append("{}: {}".format(key, value))
             msg += "\n- {}: {}".format(key, value)
-        self.metadataPlainText.setPlainText(msg[11:])
+        self.metadata_plain_text.setPlainText(msg[11:])
         # Send a message to the text area
         self.msg2TextArea.emit(msg)
 
     def addData(self, data):
         """
-        Add data names into self.dataList
+        Add data names into self.data_list
         :param data: WaterFrame data variable
         """
 
@@ -365,47 +362,47 @@ class PlotSplitter(QSplitter):
                 return False
 
         # Clear the list
-        self.dataList.clear()
+        self.data_list.clear()
         # Parameter keys (without QC)
         # NO DEPTH in nc files, NO TIME
         keys_to_work = [key for key in data.keys() if 'TIME' not in key
                         if not is_acoustic_data(key)
                         if key + "_QC" in data.keys()]
-        self.dataList.addItems(keys_to_work)
+        self.data_list.addItems(keys_to_work)
         # Add graphs
-        self.graphList.clear()
-        self.graphList.addItem("QC")
+        self.graph_list.clear()
+        self.graph_list.addItem("QC")
         # Check if we have acoustic data
         for key in data.keys():
             if is_acoustic_data(key):
-                self.graphList.addItem("Spectrogram")
+                self.graph_list.addItem("Spectrogram")
                 break
 
         # Add tooltip
         msg = "\nData:"
-        for i in range(self.dataList.count()):
-            if "_QC" in self.dataList.item(i).text():
-                self.dataList.item(i).setToolTip(
-                    'QC flags of {}'.format(self.dataList.item(i).text()[:-3]))
+        for i in range(self.data_list.count()):
+            if "_QC" in self.data_list.item(i).text():
+                self.data_list.item(i).setToolTip(
+                    'QC flags of {}'.format(self.data_list.item(i).text()[:-3]))
             else:
                 try:
-                    self.dataList.item(i).setToolTip('{} ({})'.format(
+                    self.data_list.item(i).setToolTip('{} ({})'.format(
                         self.wf.meaning[
-                            self.dataList.item(i).text()]['long_name'],
+                            self.data_list.item(i).text()]['long_name'],
                         self.wf.meaning[
-                            self.dataList.item(i).text()]['units']))
+                            self.data_list.item(i).text()]['units']))
                     msg += "\n- {}: {} ({})".format(
-                        self.dataList.item(i).text(),
+                        self.data_list.item(i).text(),
                         self.wf.meaning[
-                            self.dataList.item(i).text()]['long_name'],
+                            self.data_list.item(i).text()]['long_name'],
                         self.wf.meaning[
-                            self.dataList.item(i).text()]['units'])
+                            self.data_list.item(i).text()]['units'])
                 except KeyError:
                     pass
         # Send a message to the text area
         self.msg2TextArea.emit(msg)
-        # Send the labels to the dropWidget
-        self.dropWidget.addLabels(keys_to_work)
+        # Send the labels to the drop_widget
+        self.drop_widget.addLabels(keys_to_work)
         self.qcWidget.addLabels(keys_to_work)
         self.renameWidget.addLabels(keys_to_work)
         self.sliceWidget.refresh(self.wf.data.index[0], self.wf.data.index[-1])
@@ -420,7 +417,6 @@ class PlotSplitter(QSplitter):
         extension = path.split(".")[-1]
         # Init ok
         ok = False
-        wf_new = WaterFrame()
         if extension == "nc":
             pass
         elif extension == "pkl":
@@ -456,13 +452,13 @@ class PlotSplitter(QSplitter):
 
         # Delete plots with the key
         for label in labels:
-            for plotWidget in self.plotWidgetList:
+            for plotWidget in self.plot_widget_list:
                 if plotWidget.name == "QC":
                     plotWidget.refreshPlot()
                 if label == plotWidget.name or label+"_" in \
                    plotWidget.name or "_"+label in plotWidget.name:
                     plotWidget.deleteLater()
-                    self.plotWidgetList.remove(plotWidget)
+                    self.plot_widget_list.remove(plotWidget)
 
         # Send message
         msg = ""
@@ -503,7 +499,7 @@ class PlotSplitter(QSplitter):
                 #  Reset flags
                 self.msg2Statusbar.emit(
                     "Setting flags from {} to {}".format(key_in, listQC[0]))
-                self.wf.reset_flag(key=key_in, flag=int(listQC[0]))
+                self.wf.reset_flag(parameters=key_in, flag=int(listQC[0]))
                 self.msg2Statusbar.emit("Ready")
             if listQC[3]:
                 # Spike test
@@ -512,21 +508,21 @@ class PlotSplitter(QSplitter):
                     "Applying spike test to "
                     "{}, with rolling window {} and threshold {}".format(
                         key_in, listQC[5], threshold))
-                self.wf.spike_test(key=key_in, window=int(listQC[5]),
+                self.wf.spike_test(parameters=key_in, window=int(listQC[5]),
                                    threshold=threshold, flag=int(listQC[3]))
                 self.msg2Statusbar.emit("Ready")
             if listQC[1]:
                 # Range test
                 self.msg2Statusbar.emit(
                     "Applying range test to {}".format(key_in))
-                self.wf.range_test(key=key_in, flag=int(listQC[1]))
+                self.wf.range_test(parameters=key_in, flag=int(listQC[1]))
                 self.msg2Statusbar.emit("Ready")
             if listQC[2]:
                 # Flat test
                 self.msg2Statusbar.emit(
                     "Applying flat test to"
                     " {}, with rolling window {}".format(key_in, listQC[5]))
-                self.wf.flat_test(key=key_in, window=int(listQC[5]),
+                self.wf.flat_test(parameters=key_in, window=int(listQC[5]),
                                   flag=int(listQC[2]))
                 self.msg2Statusbar.emit("Ready")
             if listQC[6]:
@@ -534,7 +530,7 @@ class PlotSplitter(QSplitter):
                 self.msg2Statusbar.emit(
                     "Changing flags of "
                     "{} from {} to {}".format(key_in, listQC[6], listQC[7]))
-                self.wf.flag2flag(key=key_in, original_flag=int(listQC[6]),
+                self.wf.flag2flag(parameters=key_in, original_flag=int(listQC[6]),
                                   translated_flag=int(listQC[7]))
                 self.msg2Statusbar.emit("Ready")
 
@@ -550,7 +546,7 @@ class PlotSplitter(QSplitter):
 
         self.msg2Statusbar.emit("Updating graphs")
         # Refresh the QC graph
-        for plotWidget in self.plotWidgetList:
+        for plotWidget in self.plot_widget_list:
             if "QC" in plotWidget.name:
 
                 if plotWidget.isVisible():
@@ -568,7 +564,7 @@ class PlotSplitter(QSplitter):
             "Changing name {} to {}".format(original_key, new_key))
         self.wf.rename(original_key, new_key)
         # Rename the key of the plotWidgets if it process
-        for plotWidget in self.plotWidgetList:
+        for plotWidget in self.plot_widget_list:
             if isinstance(plotWidget.key, list):
                 for i, key in enumerate(plotWidget.key):
                     if key == original_key:
@@ -583,7 +579,7 @@ class PlotSplitter(QSplitter):
                     plotWidget.key = new_key
                     plotWidget.name = new_key
                     plotWidget.refreshPlot()
-        # Add data information into dataList
+        # Add data information into data_list
         self.addData(self.wf.data)
         self.msg2Statusbar.emit("Ready")
         self.msg2TextArea.emit(
@@ -625,9 +621,9 @@ class PlotSplitter(QSplitter):
         """Create a new WaterFrame object and clean all screens."""
         self.wf = WaterFrame()
         # Delete all plots
-        for plotWidget in self.plotWidgetList:
+        for plotWidget in self.plot_widget_list:
             plotWidget.deleteLater()
-        self.plotWidgetList.clear()
+        self.plot_widget_list.clear()
         # Hide the widget
         self.hide()
 
@@ -635,11 +631,11 @@ class PlotSplitter(QSplitter):
         """It refresh all plots"""
         self.msg2Statusbar.emit("Refreshing plots")
 
-        for plotWidget in self.plotWidgetList:
+        for plotWidget in self.plot_widget_list:
             try:
                 plotWidget.refreshPlot()
             except KeyError:
-                self.plotWidgetList.remove(plotWidget)
+                self.plot_widget_list.remove(plotWidget)
                 plotWidget.hide()
                 plotWidget.deleteLater()
 

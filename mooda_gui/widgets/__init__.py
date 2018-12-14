@@ -1,3 +1,5 @@
+"""Constructor of package"""
+
 from mooda_gui.widgets.dropwidget import DropWidget
 from mooda_gui.widgets.qcwidget import QCWidget
 from mooda_gui.widgets.renamewidget import RenameWidget
