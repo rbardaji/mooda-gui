@@ -73,7 +73,7 @@ class MOODA(QMainWindow):
         self.save_act = QAction(QIcon(path_icon+'\\save.png'), '&Save as...', self)
         self.save_act.setShortcut('Ctrl+S')
         self.save_act.setStatusTip('Save current data into a pickle')
-        self.save_act.triggered.connect(self.saveFile)
+        self.save_act.triggered.connect(self.save_file)
         file_menu.addAction(self.save_act)
         # --- Separator ---
         file_menu.addSeparator()
@@ -179,7 +179,7 @@ class MOODA(QMainWindow):
             # New frame
             self.egim_downloader.reload()
 
-    def open_file(self, wf=None, concat=False):
+    def open_file(self, wf=None, concat=False):  # pylint: disable=C0103
         """
         It opens a QFileDialog and load the input file
         :param wf: WaterFrame object
@@ -195,7 +195,7 @@ class MOODA(QMainWindow):
 
         # Send the path to the PlotFrame to be opened
         if file_name:
-            ok = self.plot_area.openData(file_name, concat)
+            ok = self.plot_area.openData(file_name, concat)  # pylint: disable=C0103
             if ok:
                 # Show plot area
                 self.plot_area.show()
@@ -210,7 +210,7 @@ class MOODA(QMainWindow):
                 self.resample_act.setEnabled(True)
                 self.slice_act.setEnabled(True)
 
-    def saveFile(self):
+    def save_file(self):
         """
         It opens a QFileDialog and save current data.
         """

@@ -1,3 +1,8 @@
+"""It contains the class DropWidget, that is a pyQT5 widget that show items
+in a QListWidget with Checks."""
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+
 from PyQt5.QtWidgets import (QWidget, QLabel, QListWidget, QPushButton,
                              QRadioButton, QSpinBox, QHBoxLayout, QVBoxLayout,
                              QCheckBox)
@@ -15,95 +20,94 @@ class DropWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
-
+    def init_ui(self):
+        """Layout and main functionality."""
         # Labels
-        dropLabel = QLabel("Delete parameter")
+        drop_label = QLabel("Delete parameter")
 
         # Lists
-        self.dropList = QListWidget(self)
+        self.drop_list = QListWidget(self)
 
         # Buttons
-        applyDropButton = QPushButton("Apply")
-        applyDropButton.clicked.connect(self.sendLabels)
-        hideDropButton = QPushButton("Hide")
-        hideDropButton.clicked.connect(self.hide)
+        apply_drop_button = QPushButton("Apply")
+        apply_drop_button.clicked.connect(self.send_labels)
+        hide_drop_button = QPushButton("Hide")
+        hide_drop_button.clicked.connect(self.hide)
 
         # Radio buttons
-        self.allRadio = QRadioButton("All", self)
-        self.allRadio.setChecked(True)
-        self.goodRadio = QRadioButton("Use QC Flags = 0 and 1", self)
-        self.oneRadio = QRadioButton("Remove QC flag: ", self)
+        self.all_radio = QRadioButton("All", self)
+        self.all_radio.setChecked(True)
+        self.good_radio = QRadioButton("Use QC Flags = 0 and 1", self)
+        self.one_radio = QRadioButton("Remove QC flag: ", self)
 
         # Check box
-        self.dropNanCheck = QCheckBox("Drop NaN", self)
-        self.dropNanCheck.setChecked(True)
+        self.drop_nan_check = QCheckBox("Drop NaN", self)
+        self.drop_nan_check.setChecked(True)
 
         # Spin inputs
-        self.qcSpinBox = QSpinBox(self)
-        self.qcSpinBox.setMinimum(0)
-        self.qcSpinBox.setMaximum(9)
-        self.qcSpinBox.setValue(0)
+        self.qc_spin_box = QSpinBox(self)
+        self.qc_spin_box.setMinimum(0)
+        self.qc_spin_box.setMaximum(9)
+        self.qc_spin_box.setValue(0)
 
         # Layout
-        # - Horizontal Layout for oneRadioButton -
-        hOne = QHBoxLayout()
-        hOne.addWidget(self.oneRadio)
-        hOne.addWidget(self.qcSpinBox)
+        # - Horizontal Layout for one_radio -
+        h_one = QHBoxLayout()
+        h_one.addWidget(self.one_radio)
+        h_one.addWidget(self.qc_spin_box)
         # - General layout -
-        vDrop = QVBoxLayout()
-        vDrop.addWidget(dropLabel)
-        vDrop.addWidget(self.dropList)
-        vDrop.addWidget(self.allRadio)
-        vDrop.addWidget(self.goodRadio)
-        vDrop.addLayout(hOne)
-        vDrop.addWidget(self.dropNanCheck)
-        vDrop.addWidget(applyDropButton)
-        vDrop.addWidget(hideDropButton)
-        self.setLayout(vDrop)
+        v_drop = QVBoxLayout()
+        v_drop.addWidget(drop_label)
+        v_drop.addWidget(self.drop_list)
+        v_drop.addWidget(self.all_radio)
+        v_drop.addWidget(self.good_radio)
+        v_drop.addLayout(h_one)
+        v_drop.addWidget(self.drop_nan_check)
+        v_drop.addWidget(apply_drop_button)
+        v_drop.addWidget(hide_drop_button)
+        self.setLayout(v_drop)
 
-    def addLabels(self, labels):
-        """Add items to self.dropList"""
+    def add_labels(self, labels):
+        """Add items to self.drop_list"""
         # Clear the list
-        self.dropList.clear()
+        self.drop_list.clear()
         # Add new items
-        self.dropList.addItems(labels)
+        self.drop_list.addItems(labels)
 
         # Configure the items checkable
-        for index in range(self.dropList.count()):
-            item = self.dropList.item(index)
+        for index in range(self.drop_list.count()):
+            item = self.drop_list.item(index)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Unchecked)
 
-    def sendLabels(self):
+    def send_labels(self):
         """
-        It returns the list of checked items from self.dropList. It also send
+        It returns the list of checked items from self.drop_list. It also send
         the signal list2drop with the list.
 
         Returns
         -------
-            (labels, flagList): (list of str, list of int)
-                (List with checked labels from self.dropList, List of flags)
+            (labels, flag_list): (list of str, list of int)
+                (List with checked labels from self.drop_list, List of flags)
         """
         # Look for checked items and create the list
         labels = []
-        for index in range(self.dropList.count()):
-            item = self.dropList.item(index)
+        for index in range(self.drop_list.count()):
+            item = self.drop_list.item(index)
             if item.checkState():
                 labels.append(item.text())
 
         # Flag lists
-        flagList = []
-        if self.allRadio.isChecked():
-            flagList = [None]
-        elif self.goodRadio.isChecked():
-            flagList = [2, 3, 4, 5, 6, 7, 8, 9]
-        elif self.oneRadio.isChecked():
-            flagList = [self.qcSpinBox.value()]
+        flag_list = []
+        if self.all_radio.isChecked():
+            flag_list = [None]
+        elif self.good_radio.isChecked():
+            flag_list = [2, 3, 4, 5, 6, 7, 8, 9]
+        elif self.one_radio.isChecked():
+            flag_list = [self.qc_spin_box.value()]
         # Send the signal
         if labels:
-            self.list2drop.emit(labels, flagList,
-                                self.dropNanCheck.isChecked())
-        return labels, flagList
+            self.list2drop.emit(labels, flag_list, self.drop_nan_check.isChecked())
+        return labels, flag_list
