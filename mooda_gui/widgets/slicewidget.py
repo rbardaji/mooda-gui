@@ -1,3 +1,7 @@
+"""Widget module"""
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+
 from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QDateTimeEdit,
                              QHBoxLayout, QVBoxLayout)
 from PyQt5.QtCore import pyqtSignal
@@ -11,53 +15,56 @@ class SliceWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
+    def init_ui(self):
+        """Layout and main functionalities"""
 
         # Labels
-        sliceLabel = QLabel("Slicing")
-        startLabel = QLabel("Start: ")
-        endLabel = QLabel("End: ")
+        slice_label = QLabel("Slicing")
+        start_label = QLabel("Start: ")
+        end_label = QLabel("End: ")
 
         # DateTimeEdit
-        self.startDateTimeEdit = QDateTimeEdit()
-        self.endDateTimeEdit = QDateTimeEdit()
+        self.start_date_time_edit = QDateTimeEdit()
+        self.end_date_time_edit = QDateTimeEdit()
 
         # Buttons
-        applyButton = QPushButton("Apply")
-        applyButton.clicked.connect(self.sendTimes)
-        hideButton = QPushButton("Hide")
-        hideButton.clicked.connect(self.hide)
+        apply_button = QPushButton("Apply")
+        apply_button.clicked.connect(self.send_times)
+        hide_button = QPushButton("Hide")
+        hide_button.clicked.connect(self.hide)
 
         # Layouts
         # - Horizontal for start
-        hStart = QHBoxLayout()
-        hStart.addWidget(startLabel)
-        hStart.addWidget(self.startDateTimeEdit)
+        h_start = QHBoxLayout()
+        h_start.addWidget(start_label)
+        h_start.addWidget(self.start_date_time_edit)
         # - Horizontal for end
-        hEnd = QHBoxLayout()
-        hEnd.addWidget(endLabel)
-        hEnd.addWidget(self.endDateTimeEdit)
+        h_end = QHBoxLayout()
+        h_end.addWidget(end_label)
+        h_end.addWidget(self.end_date_time_edit)
 
         # - Vertical for self
-        vWidget = QVBoxLayout()
-        vWidget.addWidget(sliceLabel)
-        vWidget.addLayout(hStart)
-        vWidget.addLayout(hEnd)
-        vWidget.addWidget(applyButton)
-        vWidget.addWidget(hideButton)
-        self.setLayout(vWidget)
+        v_widget = QVBoxLayout()
+        v_widget.addWidget(slice_label)
+        v_widget.addLayout(h_start)
+        v_widget.addLayout(h_end)
+        v_widget.addWidget(apply_button)
+        v_widget.addWidget(hide_button)
+        self.setLayout(v_widget)
 
-    def sendTimes(self):
-        self.sliceTimes.emit(self.startDateTimeEdit.text(),
-                             self.endDateTimeEdit.text())
+    def send_times(self):
+        """It emits a signal with start and end dates"""
+        self.sliceTimes.emit(self.start_date_time_edit.text(),
+                             self.end_date_time_edit.text())
 
     def refresh(self, start, end):
-
-        self.startDateTimeEdit.setMinimumDateTime(start)
-        self.startDateTimeEdit.setMaximumDateTime(end)
-        self.startDateTimeEdit.setDateTime(start)
-        self.endDateTimeEdit.setMinimumDateTime(start)
-        self.endDateTimeEdit.setMaximumDateTime(end)
-        self.endDateTimeEdit.setDateTime(end)
+        """It refresh the parameters of self.start_date_time_edit and
+        self.end_date_time_edit"""
+        self.start_date_time_edit.setMinimumDateTime(start)
+        self.start_date_time_edit.setMaximumDateTime(end)
+        self.start_date_time_edit.setDateTime(start)
+        self.end_date_time_edit.setMinimumDateTime(start)
+        self.end_date_time_edit.setMaximumDateTime(end)
+        self.end_date_time_edit.setDateTime(end)

@@ -1,5 +1,8 @@
+"""Widget module"""
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+
 import os
-from numpy import timedelta64
 import seaborn as sms
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import \

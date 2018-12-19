@@ -40,13 +40,13 @@ class EgimDownloaderFrame(QFrame):
                 date = datetime.datetime.strptime(
                     self.downloader.date_list.currentItem().text(),
                     "%Y-%m-%d").strftime("%d/%m/%Y")
-                self.downloader.downloadAcoustic(
+                self.downloader.download_acoustic(
                     date, self.downloader.hour_minute_list.currentItem().text())
             else:
                 parameters = [item.text() for item in
                               self.downloader.parameter_list.selectedItems()]
                 for parameter in parameters:
-                    self.downloader.downloadParameter(parameter)
+                    self.downloader.download_parameter(parameter)
 
     def __init__(self):
         super().__init__()
@@ -68,18 +68,18 @@ class EgimDownloaderFrame(QFrame):
 
         # Buttons
         download_button = QPushButton("Download", self)
-        download_button.clicked.connect(self.downloadClick)
+        download_button.clicked.connect(self.download_click)
         download_button.setEnabled(False)
         close_button = QPushButton("Close", self)
         close_button.clicked.connect(self.hide)
 
         # Lists
         self.egim_list = QListWidget(self)
-        self.egim_list.itemClicked.connect(self.loadInstruments)
+        self.egim_list.itemClicked.connect(self.load_instruments)
         self.egim_list.setMaximumWidth(200)
 
         self.instrument_list = QListWidget(self)
-        self.instrument_list.itemClicked.connect(self.loadParameters)
+        self.instrument_list.itemClicked.connect(self.load_parameters)
         self.instrument_list.setMaximumWidth(290)
 
         self.metadata_list = QListWidget(self)
@@ -89,7 +89,7 @@ class EgimDownloaderFrame(QFrame):
         self.parameter_list.itemClicked.connect(lambda: download_button.setEnabled(True))
 
         self.date_list = QListWidget(self)
-        self.date_list.itemClicked.connect(self.loadTimes)
+        self.date_list.itemClicked.connect(self.load_times)
         self.date_list.setMaximumWidth(150)
         self.hour_minute_list = QListWidget(self)
         self.hour_minute_list.itemClicked.connect(lambda: download_button.setEnabled(True))
@@ -121,7 +121,7 @@ class EgimDownloaderFrame(QFrame):
         self.limit_spin_box.setMinimum(0)
         self.limit_spin_box.setMaximum(9999999999)
         self.limit_spin_box.setSingleStep(100)
-        self.limit_spin_box.valueChanged.connect(self.enableDate)
+        self.limit_spin_box.valueChanged.connect(self.enable_date)
 
         # Custom Widgets
 
@@ -138,51 +138,51 @@ class EgimDownloaderFrame(QFrame):
         self.acoustic_date_widget.setEnabled(False)
 
         # Widget for dates of parameters
-        self.parameterDateWidget = QWidget(self)
+        self.parameter_date_widget = QWidget(self)
         # - Layout
-        vparameterDate = QVBoxLayout()
-        vparameterDate.addWidget(start_date_label)
-        vparameterDate.addWidget(self.start_date_edit)
-        vparameterDate.addWidget(end_date_label)
-        vparameterDate.addWidget(self.end_date_edit)
-        vparameterDate.addWidget(limit_label)
-        vparameterDate.addWidget(self.limit_spin_box)
-        vparameterDate.addStretch()
-        self.parameterDateWidget.setLayout(vparameterDate)
-        self.parameterDateWidget.setEnabled(False)
+        v_parameter_date = QVBoxLayout()
+        v_parameter_date.addWidget(start_date_label)
+        v_parameter_date.addWidget(self.start_date_edit)
+        v_parameter_date.addWidget(end_date_label)
+        v_parameter_date.addWidget(self.end_date_edit)
+        v_parameter_date.addWidget(limit_label)
+        v_parameter_date.addWidget(self.limit_spin_box)
+        v_parameter_date.addStretch()
+        self.parameter_date_widget.setLayout(v_parameter_date)
+        self.parameter_date_widget.setEnabled(False)
 
         # Layout
         # - Vertical layout for EGIM --
-        vEgim = QVBoxLayout()
-        vEgim.addWidget(egim_label)
-        vEgim.addWidget(self.egim_list)
+        v_egim = QVBoxLayout()
+        v_egim.addWidget(egim_label)
+        v_egim.addWidget(self.egim_list)
         # -- Vertical layout for instruments -
-        vInstrument = QVBoxLayout()
-        vInstrument.addWidget(instrument_label)
-        vInstrument.addWidget(self.instrument_list)
+        v_instrument = QVBoxLayout()
+        v_instrument.addWidget(instrument_label)
+        v_instrument.addWidget(self.instrument_list)
         # - Vertical layout for parameters -
-        vParameter = QVBoxLayout()
-        vParameter.addWidget(metadata_label)
-        vParameter.addWidget(self.metadata_list)
-        vParameter.addWidget(parameter_label)
-        vParameter.addWidget(self.parameter_list)
+        v_parameter = QVBoxLayout()
+        v_parameter.addWidget(metadata_label)
+        v_parameter.addWidget(self.metadata_list)
+        v_parameter.addWidget(parameter_label)
+        v_parameter.addWidget(self.parameter_list)
         # - Vertical layout for dates and buttons
-        vButton = QVBoxLayout()
-        vButton.addWidget(download_button)
-        vButton.addWidget(close_button)
-        vButton.addStretch()
+        v_button = QVBoxLayout()
+        v_button.addWidget(download_button)
+        v_button.addWidget(close_button)
+        v_button.addStretch()
         # - Layout of the frame -
-        hFrame = QHBoxLayout()
-        hFrame.addLayout(vEgim)
-        hFrame.addLayout(vInstrument)
-        hFrame.addLayout(vParameter)
-        hFrame.addWidget(self.parameterDateWidget)
-        hFrame.addWidget(self.acoustic_date_widget)
-        hFrame.addLayout(vButton)
+        h_frame = QHBoxLayout()
+        h_frame.addLayout(v_egim)
+        h_frame.addLayout(v_instrument)
+        h_frame.addLayout(v_parameter)
+        h_frame.addWidget(self.parameter_date_widget)
+        h_frame.addWidget(self.acoustic_date_widget)
+        h_frame.addLayout(v_button)
 
-        self.setLayout(hFrame)
+        self.setLayout(h_frame)
 
-    def loadObservatories(self):
+    def load_observatories(self):
         """
         It asks for the available EGIM observatories and write its names into
         self.egim_list
@@ -193,11 +193,11 @@ class EgimDownloaderFrame(QFrame):
         # Clear self.egim_list
         self.egim_list.clear()
         # Ask for the observatories
-        code, observatoryList = self.downloader.observatories()
+        code, observatory_list = self.downloader.observatories()
         if code:
             if code == 200:
                 # It means that you are going good
-                self.egim_list.addItems(observatoryList)
+                self.egim_list.addItems(observatory_list)
                 # Send a message for the statusbar
                 self.msg2Statusbar.emit("Ready")
             elif code == 401:
@@ -217,7 +217,7 @@ class EgimDownloaderFrame(QFrame):
             self.msg2Statusbar.emit(
                 "Impossible to connect to the EMSODEV DMP API")
 
-    def loadInstruments(self, observatory):
+    def load_instruments(self, observatory):
         """
         It asks for the available instruments and write its names into
         self.instrument_list
@@ -225,7 +225,7 @@ class EgimDownloaderFrame(QFrame):
         Parameters
         ----------
             observatory: item
-                item from self.observatoryList
+                item from self.observatory_list
         """
         # Send a message for the statusbar
         self.msg2Statusbar.emit("Loading instruments")
@@ -237,9 +237,8 @@ class EgimDownloaderFrame(QFrame):
             if code == 200:
                 # It means that you are going good
                 # Obtain all sensor names of instrument_list_
-                sensorType = [
-                    instrument['name'] for instrument in instrument_list_]
-                self.instrument_list.addItems(sensorType)
+                sensor_type = [instrument['name'] for instrument in instrument_list_]
+                self.instrument_list.addItems(sensor_type)
                 # Add tooltip
                 for i in range(self.instrument_list.count()):
                     self.instrument_list.item(i).setToolTip(
@@ -268,7 +267,7 @@ class EgimDownloaderFrame(QFrame):
             self.msg2Statusbar.emit(
                 "Impossible to connect to the EMSODEV DMP API")
 
-    def loadParameters(self, instrument):
+    def load_parameters(self, instrument):
         """
         It asks for the available parameters and metadata and write them into
         self.parameter_list and self.metadata_list
@@ -278,7 +277,7 @@ class EgimDownloaderFrame(QFrame):
         # Clear self.parameter_list and self.metadata_list
         self.parameter_list.clear()
         self.metadata_list.clear()
-        self.parameterDateWidget.setEnabled(False)
+        self.parameter_date_widget.setEnabled(False)
         self.acoustic_date_widget.setEnabled(False)
 
         # If instrument is an icListener, check times
@@ -297,7 +296,7 @@ class EgimDownloaderFrame(QFrame):
                 return
             return
 
-        self.parameterDateWidget.setEnabled(True)
+        self.parameter_date_widget.setEnabled(True)
 
         # Ask for metadata
         code, self.metadata = self.downloader.metadata(
@@ -345,44 +344,43 @@ class EgimDownloaderFrame(QFrame):
             self.msg2Statusbar.emit(
                 "Impossible to connect to the EMSODEV DMP API")
 
-    def loadTimes(self, date_item):
+    def load_times(self, date_item):
         """
         Write items into self.hour_minute_list QListWidget
         """
         for date in self.dates:
             if date['acousticObservationDate'] == date_item.text():
-                timeList = []
+                time_list = []
                 for time in date['observationsHourMinuteList']:
-                    timeList.append(time['acousticObservationHourMinute'])
-                self.hour_minute_list.addItems(timeList)
+                    time_list.append(time['acousticObservationHourMinute'])
+                self.hour_minute_list.addItems(time_list)
 
     def reload(self):
         """It clear all lists and load again the observatories."""
         # Check the password of the API
         if self.downloader.password is None:
-            self.msg2Statusbar.emit(
-                "Password is required to download data from EMSODEV")
-            text, ok = QInputDialog.getText(self, "Attention", "Password",
-                                            QLineEdit.Password)
+            self.msg2Statusbar.emit("Password is required to download data from EMSODEV")
+            # pylint: disable=C0103
+            text, ok = QInputDialog.getText(self, "Attention", "Password", QLineEdit.Password)
             if ok:
                 self.downloader.password = text
             else:
                 return
-        self.loadObservatories()
+        self.load_observatories()
 
-    def downloadClick(self):
+    def download_click(self):
         """Function when user click download"""
 
         self.my_thread = self.DownloadParameterThread(self)
         self.my_thread.start()
 
-    def downloadParameter(self, parameter):
+    def download_parameter(self, parameter):
         """It download data with the observation function of EGIM"""
 
         # Send a message for the statusbar
         self.msg2Statusbar.emit("Downloading {}".format(parameter))
 
-        code, df = self.downloader.observation(
+        code, df = self.downloader.observation(  # pylint: disable=C0103
             observatory=self.egim_list.currentItem().text(),
             instrument=self.instrument_list.currentItem().text(),
             parameter=parameter,
@@ -393,8 +391,8 @@ class EgimDownloaderFrame(QFrame):
             if code == 200:
                 self.msg2Statusbar.emit("Waterframe creation")
                 # It means that you are going good
-                wf = self.downloader.to_waterframe(data=df,
-                                                   metadata=self.metadata)
+                # pylint: disable=C0103
+                wf = self.downloader.to_waterframe(data=df, metadata=self.metadata)
                 # print(wf.data.head())
                 # Send a signal with the new WaterFrame
                 self.wf2plotSplitter.emit(wf)
@@ -416,12 +414,13 @@ class EgimDownloaderFrame(QFrame):
             self.msg2Statusbar.emit(
                 "Impossible to connect to the EMSODEV DMP API")
 
-    def downloadAcoustic(self, date, time):
+    def download_acoustic(self, date, time):
+        """Download acoustic data from EMSO"""
         # Send a message for the statusbar
         self.msg2Statusbar.emit(
             "Downloading acoustic file from {}, {}".format(date, time))
 
-        code, df, metadata = self.downloader.acoustic_observation(
+        code, df, metadata = self.downloader.acoustic_observation(  # pylint: disable=C0103
             observatory=self.egim_list.currentItem().text(),
             instrument=self.instrument_list.currentItem().text(),
             date=date,
@@ -430,6 +429,7 @@ class EgimDownloaderFrame(QFrame):
             if code == 200:
                 self.msg2Statusbar.emit("Waterframe creation")
                 # It means that you are going good
+                # pylint: disable=C0103
                 wf = self.downloader.to_waterframe(data=df, metadata=metadata)
                 # Send a signal with the new WaterFrame
                 self.wf2plotSplitter.emit(wf)
@@ -451,7 +451,7 @@ class EgimDownloaderFrame(QFrame):
             self.msg2Statusbar.emit(
                 "Impossible to connect to the EMSODEV DMP API")
 
-    def enableDate(self):
+    def enable_date(self):
         """Enable or disable date elements"""
         if int(self.limit_spin_box.text()) > 0:
             self.start_date_edit.setEnabled(False)
