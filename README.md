@@ -1,8 +1,6 @@
-# mooda-gui
+![mooda header](docs/img/logos/mooda_gui-documentation-header.png)
 
-Graphical User Interface to use the mooda functionalities.
-
-## Run it
+# Run it
 
 Just write:
 
