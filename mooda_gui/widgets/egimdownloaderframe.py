@@ -187,6 +187,10 @@ class EgimDownloaderFrame(QFrame):
         It asks for the available EGIM observatories and write its names into
         self.egim_list
         """
+        debug = True  # For print debug info
+
+        if debug:
+            print("- In EgimDownloaderFrame.load_observatory() -")
 
         # Send a message for the statusbar
         self.msg2Statusbar.emit("Loading observatories")
@@ -194,6 +198,11 @@ class EgimDownloaderFrame(QFrame):
         self.egim_list.clear()
         # Ask for the observatories
         code, observatory_list = self.downloader.observatories()
+
+        if debug:
+            print("code:", code)
+            print("observatory_list:", observatory_list)
+
         if code:
             if code == 200:
                 # It means that you are going good
@@ -201,8 +210,11 @@ class EgimDownloaderFrame(QFrame):
                 # Send a message for the statusbar
                 self.msg2Statusbar.emit("Ready")
             elif code == 401:
-                self.msg2Statusbar.emit(
-                    "Unauthorized to use the EMSODEV DMP API")
+
+                if debug:
+                    print("msg2Statusbar: Unauthorized to use the EMSODEV DMP API", code)
+
+                self.msg2Statusbar.emit("Unauthorized to use the EMSODEV DMP API")
                 self.downloader.password = None
                 self.reload()
             elif code == 404:
@@ -211,6 +223,8 @@ class EgimDownloaderFrame(QFrame):
                 self.msg2Statusbar.emit("Forbidden")
             elif code == 500:
                 self.msg2Statusbar.emit("EMSODEV API internal error")
+            elif code == 504:
+                self.msg2Statusbar.emit("EMSODEV DMP error: Gateway Time Out")
             else:
                 self.msg2Statusbar.emit("Unknown EMSODEV DMP API error")
         else:
@@ -357,11 +371,23 @@ class EgimDownloaderFrame(QFrame):
 
     def reload(self):
         """It clear all lists and load again the observatories."""
+        debug = True
+
+        if debug:
+            print("- In EgimDownloaderFrame.reload() -")
+            print("self.downloader.password:", self.downloader.password)
         # Check the password of the API
         if self.downloader.password is None:
             self.msg2Statusbar.emit("Password is required to download data from EMSODEV")
+
             # pylint: disable=C0103
-            text, ok = QInputDialog.getText(self, "Attention", "Password", QLineEdit.Password)
+            text, ok = QInputDialog.getText(None, "Attention", "Password", QLineEdit.Password)
+
+            if debug:
+                print("Request for password")
+                print("text:", text)
+                print("ok:", ok)
+
             if ok:
                 self.downloader.password = text
             else:

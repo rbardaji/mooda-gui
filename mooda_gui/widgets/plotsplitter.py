@@ -17,7 +17,7 @@ class PlotSplitter(QSplitter):
     """Pyqt5 widget to show data in plots and lists."""
 
     # Signals
-    msg2Statusbar = pyqtSignal(str)
+    msg2statusbar = pyqtSignal(str)
     msg2TextArea = pyqtSignal(str)
 
     def __init__(self):
@@ -39,9 +39,9 @@ class PlotSplitter(QSplitter):
         # Lists
         self.data_list = QListWidget(self)
         self.data_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.data_list.itemClicked.connect(self.dataListClick)
+        self.data_list.itemClicked.connect(self.data_list_click)
         self.graph_list = QListWidget(self)
-        self.graph_list.itemClicked.connect(self.graphClick)
+        self.graph_list.itemClicked.connect(self.graph_click)
 
         # PlainTextEdit
         self.other_info_plain_text = QPlainTextEdit(self)
@@ -55,211 +55,212 @@ class PlotSplitter(QSplitter):
 
         # DropWidget
         self.drop_widget = DropWidget()
-        self.drop_widget.list2drop[list, list, bool].connect(self.dropData)
+        self.drop_widget.list2drop[list, list, bool].connect(self.drop_data)
         self.drop_widget.hide()
 
         # Group Box
-        plotGroupBox = QGroupBox("Plot properties", self)
-        vPlotGroupBox = QVBoxLayout()
+        plot_group_box = QGroupBox("Plot properties", self)
+        v_plot_group_box = QVBoxLayout()
         # - RadioButton
-        self.autoPlotRadioButton = QRadioButton("Time series plot", self)
-        self.autoPlotRadioButton.setChecked(True)
-        self.multipleParameterRadioButton = QRadioButton("Multiparameter", self)
-        self.correlationRadioButton = QRadioButton("Correlation", self)
-        self.histogramRadioButton = QRadioButton("Histogram", self)
-        self.parameterQCRadioButton = QRadioButton("QC of the parameter", self)
-        vPlotGroupBox.addWidget(self.autoPlotRadioButton)
-        vPlotGroupBox.addWidget(self.histogramRadioButton)
-        vPlotGroupBox.addWidget(self.multipleParameterRadioButton)
-        vPlotGroupBox.addWidget(self.correlationRadioButton)
-        vPlotGroupBox.addWidget(self.parameterQCRadioButton)
-        plotGroupBox.setLayout(vPlotGroupBox)
+        self.auto_plot_radio_button = QRadioButton("Time series plot", self)
+        self.auto_plot_radio_button.setChecked(True)
+        self.multiple_parameter_radio_button = QRadioButton("Multiparameter", self)
+        self.correlation_radio_button = QRadioButton("Correlation", self)
+        self.histogram_radio_button = QRadioButton("Histogram", self)
+        self.parameter_qc_radio_button = QRadioButton("QC of the parameter", self)
+        v_plot_group_box.addWidget(self.auto_plot_radio_button)
+        v_plot_group_box.addWidget(self.histogram_radio_button)
+        v_plot_group_box.addWidget(self.multiple_parameter_radio_button)
+        v_plot_group_box.addWidget(self.correlation_radio_button)
+        v_plot_group_box.addWidget(self.parameter_qc_radio_button)
+        plot_group_box.setLayout(v_plot_group_box)
 
         # QCWidget
-        self.qcWidget = QCWidget()
-        self.qcWidget.list2qc[list].connect(self.applyQC)
-        self.qcWidget.hide()
+        self.qc_widget = QCWidget()
+        self.qc_widget.list2qc[list].connect(self.apply_qc)
+        self.qc_widget.hide()
 
         # RenameWidget
-        self.renameWidget = RenameWidget()
-        self.renameWidget.key2change[str, str].connect(self.applyRename)
-        self.renameWidget.hide()
+        self.rename_widget = RenameWidget()
+        self.rename_widget.key2change[str, str].connect(self.apply_rename)
+        self.rename_widget.hide()
 
         # ResampleWidget
-        self.resampleWidget = ResampleWidget()
-        self.resampleWidget.resampleRule[str].connect(self.applyResample)
-        self.resampleWidget.hide()
+        self.resample_widget = ResampleWidget()
+        self.resample_widget.resampleRule[str].connect(self.apply_resample)
+        self.resample_widget.hide()
 
         # SliceWidget
-        self.sliceWidget = SliceWidget()
-        self.sliceWidget.sliceTimes[str, str].connect(self.applySlice)
-        self.sliceWidget.hide()
+        self.slice_widget = SliceWidget()
+        self.slice_widget.sliceTimes[str, str].connect(self.apply_slice)
+        self.slice_widget.hide()
 
         # Splitters
-        self.vDataSplitter = QSplitter(Qt.Vertical)
+        self.v_data_splitter = QSplitter(Qt.Vertical)
         # Custom Widget Metadata
-        self.vMetadataWidget = QWidget()
+        self.v_metadata_widget = QWidget()
 
         # Buttons
         # - For metadata area
-        hideMetadataButton = QPushButton("Hide")
-        hideMetadataButton.clicked.connect(self.vMetadataWidget.hide)
+        hide_metadata_button = QPushButton("Hide")
+        hide_metadata_button.clicked.connect(self.v_metadata_widget.hide)
         # - For data Area
-        plotButton = QPushButton("Plot")
-        plotButton.clicked.connect(self.addPlot)
-        hideDataButton = QPushButton("Hide")
-        hideDataButton.clicked.connect(self.vDataSplitter.hide)
+        plot_button = QPushButton("Plot")
+        plot_button.clicked.connect(self.add_plot)
+        hide_data_button = QPushButton("Hide")
+        hide_data_button.clicked.connect(self.v_data_splitter.hide)
 
         # Custom Widget Data
         # - Data Widget
-        parameterWidget = QWidget()
+        parameter_widget = QWidget()
         # -- Layout
-        vData = QVBoxLayout()
-        vData.addWidget(data_label)
-        vData.addWidget(self.data_list)
-        vData.addWidget(plotGroupBox)
-        vData.addWidget(plotButton)
-        parameterWidget.setLayout(vData)
+        v_data = QVBoxLayout()
+        v_data.addWidget(data_label)
+        v_data.addWidget(self.data_list)
+        v_data.addWidget(plot_group_box)
+        v_data.addWidget(plot_button)
+        parameter_widget.setLayout(v_data)
         # - Graph Widget
-        graphWidget = QWidget()
+        graph_widget = QWidget()
         # -- Layout
-        vGraph = QVBoxLayout()
-        vGraph.addWidget(graph_label)
-        vGraph.addWidget(self.graph_list)
-        vGraph.addWidget(hideDataButton)
-        graphWidget.setLayout(vGraph)
+        v_graph = QVBoxLayout()
+        v_graph.addWidget(graph_label)
+        v_graph.addWidget(self.graph_list)
+        v_graph.addWidget(hide_data_button)
+        graph_widget.setLayout(v_graph)
         # - Data splitter
-        self.vDataSplitter.addWidget(parameterWidget)
-        self.vDataSplitter.addWidget(graphWidget)
+        self.v_data_splitter.addWidget(parameter_widget)
+        self.v_data_splitter.addWidget(graph_widget)
 
         # Layouts
         # - Metadata -
-        vMetadata = QVBoxLayout()
-        vMetadata.addWidget(metadata_label)
-        vMetadata.addWidget(self.metadata_plain_text)
-        vMetadata.addWidget(info_label)
-        vMetadata.addWidget(self.other_info_plain_text)
-        vMetadata.addWidget(hideMetadataButton)
-        self.vMetadataWidget.setLayout(vMetadata)
+        v_metadata = QVBoxLayout()
+        v_metadata.addWidget(metadata_label)
+        v_metadata.addWidget(self.metadata_plain_text)
+        v_metadata.addWidget(info_label)
+        v_metadata.addWidget(self.other_info_plain_text)
+        v_metadata.addWidget(hide_metadata_button)
+        self.v_metadata_widget.setLayout(v_metadata)
 
         # Splitter (self)
         # - Layout for actions
-        vActionsWidget = QWidget()
-        vActions = QVBoxLayout()
-        vActions.addWidget(self.renameWidget)
-        vActions.addWidget(self.resampleWidget)
-        vActions.addWidget(self.drop_widget)
-        vActions.addWidget(self.sliceWidget)
-        vActions.addStretch()
-        vActionsWidget.setLayout(vActions)
+        v_actions_widget = QWidget()
+        v_actions = QVBoxLayout()
+        v_actions.addWidget(self.rename_widget)
+        v_actions.addWidget(self.resample_widget)
+        v_actions.addWidget(self.drop_widget)
+        v_actions.addWidget(self.slice_widget)
+        v_actions.addStretch()
+        v_actions_widget.setLayout(v_actions)
         # - Add to self (splitter)
-        self.addWidget(self.qcWidget)
-        self.addWidget(vActionsWidget)
-        self.addWidget(self.vMetadataWidget)
-        self.addWidget(self.vDataSplitter)
+        self.addWidget(self.qc_widget)
+        self.addWidget(v_actions_widget)
+        self.addWidget(self.v_metadata_widget)
+        self.addWidget(self.v_data_splitter)
 
-    def dataListClick(self):
-        if (self.autoPlotRadioButton.isChecked() or self.histogramRadioButton.isChecked()):
-            self.addPlot()
+    def data_list_click(self):
+        """Action on lick item of data_list"""
+        if (self.auto_plot_radio_button.isChecked() or self.histogram_radio_button.isChecked()):
+            self.add_plot()
 
-    def addPlot(self):
+    def add_plot(self):
         """It creates a FigureCanvas with the input figure"""
 
-        self.msg2Statusbar.emit("Making the figure")
+        self.msg2statusbar.emit("Making the figure")
 
         # Create key list
         keys = [item.text() for item in self.data_list.selectedItems()]
 
         # If nothing is selected, go out
         if not keys:
-            self.msg2Statusbar.emit("Ready")
+            self.msg2statusbar.emit("Ready")
             return
 
         # Check if it is a QC plot
-        if self.parameterQCRadioButton.isChecked():
+        if self.parameter_qc_radio_button.isChecked():
             keys = [keys[0] + "_QC"]
 
         # Check if it is a correlation
-        if self.correlationRadioButton.isChecked():
-            plotWidget = ScatterMatrixPlotWidget(wf=self.wf, keys=keys)
-            self.addWidget(plotWidget)
+        if self.correlation_radio_button.isChecked():
+            plot_widget = ScatterMatrixPlotWidget(wf=self.wf, keys=keys)
+            self.addWidget(plot_widget)
             return
 
         # Create name of the plot
         name = '_'.join(keys)
 
-        if self.histogramRadioButton.isChecked():
+        if self.histogram_radio_button.isChecked():
             name = "hist_" + name
 
         # Check if plot is done
         new = True
-        for plotWidget in self.plot_widget_list:
-            if plotWidget.name == name:
-                if ~plotWidget.isVisible():
-                    plotWidget.refreshPlot()
-                    plotWidget.show()
+        for plot_widget in self.plot_widget_list:
+            if plot_widget.name == name:
+                if ~plot_widget.isVisible():
+                    plot_widget.refresh_plot()
+                    plot_widget.show()
                 new = False
                 break
 
         # Create the plot if is new
         if new:
             if len(keys) == 1 and "_QC" in keys[0]:
-                plotWidget = QCPlotWidget(wf=self.wf, key=keys[0])
+                plot_widget = QCPlotWidget(wf=self.wf, key=keys[0])
             else:
-                if self.histogramRadioButton.isChecked():
-                    plotWidget = HistoPlotWidget(wf=self.wf, keys=keys)
+                if self.histogram_radio_button.isChecked():
+                    plot_widget = HistoPlotWidget(wf=self.wf, keys=keys)
                 else:
-                    plotWidget = TSPlotWidget(wf=self.wf, keys=keys)
-                plotWidget.msg2Statusbar[str].connect(self.msg2Statusbar.emit)
-            self.addWidget(plotWidget)
+                    plot_widget = TSPlotWidget(wf=self.wf, keys=keys)
+                plot_widget.msg2statusbar[str].connect(self.msg2statusbar.emit)
+            self.addWidget(plot_widget)
             # Add the widget to the list
-            self.plot_widget_list.append(plotWidget)
+            self.plot_widget_list.append(plot_widget)
 
-        self.msg2Statusbar.emit("Ready")
+        self.msg2statusbar.emit("Ready")
 
-    def addQCBarPlot(self):
+    def add_qc_bar_plot(self):
         """
         It creates a FigureCanvas with the input figure (QC)
         """
-        self.msg2Statusbar.emit("Making the figure")
+        self.msg2statusbar.emit("Making the figure")
         # Check if the plot exists
-        plotWidget = None
-        for plotWidget_ in self.plot_widget_list:
-            if plotWidget_.name == "QC":
-                plotWidget = plotWidget_
-                plotWidget.wf = self.wf
-                plotWidget.refreshPlot()
-                plotWidget.show()
+        plot_widget = None
+        for plot_widget_ in self.plot_widget_list:
+            if plot_widget_.name == "QC":
+                plot_widget = plot_widget_
+                plot_widget.wf = self.wf
+                plot_widget.refresh_plot()
+                plot_widget.show()
                 break
-        if plotWidget is None:
+        if plot_widget is None:
 
-            plotWidget = QCBarPlotWidget(wf=self.wf)
-            self.addWidget(plotWidget)
+            plot_widget = QCBarPlotWidget(wf=self.wf)
+            self.addWidget(plot_widget)
             # Add the widget to the list
-            self.plot_widget_list.append(plotWidget)
-        self.msg2Statusbar.emit("Ready")
+            self.plot_widget_list.append(plot_widget)
+        self.msg2statusbar.emit("Ready")
 
-    def addSpectroPlot(self):
-        """It ads the SpectroPlotWidget to the screen"""
+    def add_spectro_plot(self):
+        """It ads the SpectroplotWidget to the screen"""
 
-        self.msg2Statusbar.emit("Making the figure")
+        self.msg2statusbar.emit("Making the figure")
         # Check if the plot exists
-        plotWidget = None
-        for plotWidget_ in self.plot_widget_list:
-            if plotWidget_.name == "Spectrogram":
-                plotWidget = plotWidget_
-                plotWidget.wf = self.wf
-                plotWidget.refreshPlot()
-                plotWidget.show()
+        plot_widget = None
+        for plot_widget_ in self.plot_widget_list:
+            if plot_widget_.name == "Spectrogram":
+                plot_widget = plot_widget_
+                plot_widget.wf = self.wf
+                plot_widget.refresh_plot()
+                plot_widget.show()
                 break
-        if plotWidget is None:
-            plotWidget = SpectrogramPlotWidget(wf=self.wf)
-            self.addWidget(plotWidget)
+        if plot_widget is None:
+            plot_widget = SpectrogramPlotWidget(wf=self.wf)
+            self.addWidget(plot_widget)
             # Add the widget to the list
-            self.plot_widget_list.append(plotWidget)
-        self.msg2Statusbar.emit("Ready")
+            self.plot_widget_list.append(plot_widget)
+        self.msg2statusbar.emit("Ready")
 
-    def openData(self, path, concat=False):
+    def open_data(self, path, concat=False):
         """
         It opens the netcdf of the path.
 
@@ -275,36 +276,36 @@ class PlotSplitter(QSplitter):
             True/False: bool
                 It indicates if the operation is ok.
         """
-        self.msg2Statusbar.emit("Opening data")
+        self.msg2statusbar.emit("Opening data")
         if isinstance(path, str):
             # Obtain type of file
             extension = path.split(".")[-1]
             # Init ok
-            ok = False
+            ok = False  # pylint: disable=C0103
             wf_new = WaterFrame()
             if extension == "nc":
-                ok = wf_new.from_netcdf(path)
+                ok = wf_new.from_netcdf(path)  # pylint: disable=C0103
             elif extension == "pkl":
-                ok = wf_new.from_pickle(path)
+                ok = wf_new.from_pickle(path)  # pylint: disable=C0103
             if ok:
                 # Check if we want actual data
                 if not concat:
-                    self.newWaterFrame()
+                    self.new_waterframe()
                 self.wf.concat(wf_new)
 
                 self.msg2TextArea.emit("Working with file {}".format(path))
                 # Add metadata information into metadataList
-                self.addMetadata(self.wf.metadata)
+                self.add_metadata(self.wf.metadata)
                 # Add other information
-                self.otherInfoPlainText.setPlainText(repr(self.wf))
+                self.other_info_plain_text.setPlainText(repr(self.wf))
                 # Add data information into data_list
-                self.addData(self.wf.data)
+                self.add_data(self.wf.data)
                 # Plot QC
-                self.addQCBarPlot()
-                self.msg2Statusbar.emit("Ready")
+                self.add_qc_bar_plot()
+                self.msg2statusbar.emit("Ready")
                 return True
             else:
-                self.msg2Statusbar.emit("Error opening data")
+                self.msg2statusbar.emit("Error opening data")
                 return False
         else:
             # Path is a WaterFrame
@@ -320,36 +321,36 @@ class PlotSplitter(QSplitter):
             self.wf.concat(path)
 
             # Add data information into data_list
-            self.addData(self.wf.data)
-            self.addMetadata(self.wf.metadata)
+            self.add_data(self.wf.data)
+            self.add_metadata(self.wf.metadata)
             # Plot QC
-            self.addQCBarPlot()
+            self.add_qc_bar_plot()
             return True
 
-    def addMetadata(self, metadataDict):
+    def add_metadata(self, metadata_dict):
         """
         Add Metadata information into self.metadata_plain_text
-        :param metadataDict: WaterFrame Metadata Dictionary
+        :param metadata_dict: WaterFrame Metadata Dictionary
         """
         # Clear the list
         self.metadata_plain_text.clear()
 
         items = []
         msg = "\nMetadata:"
-        for key, value in metadataDict.items():
+        for key, value in metadata_dict.items():
             items.append("{}: {}".format(key, value))
             msg += "\n- {}: {}".format(key, value)
         self.metadata_plain_text.setPlainText(msg[11:])
         # Send a message to the text area
         self.msg2TextArea.emit(msg)
 
-    def addData(self, data):
+    def add_data(self, data):
         """
         Add data names into self.data_list
         :param data: WaterFrame data variable
         """
 
-        def is_acoustic_data(a):
+        def is_acoustic_data(a):  # pylint: disable=C0103
             # will be True also for 'NaN'
             if a == "Sequence":
                 return True
@@ -402,67 +403,67 @@ class PlotSplitter(QSplitter):
         # Send a message to the text area
         self.msg2TextArea.emit(msg)
         # Send the labels to the drop_widget
-        self.drop_widget.addLabels(keys_to_work)
-        self.qcWidget.addLabels(keys_to_work)
-        self.renameWidget.addLabels(keys_to_work)
-        self.sliceWidget.refresh(self.wf.data.index[0], self.wf.data.index[-1])
+        self.drop_widget.add_labels(keys_to_work)
+        self.qc_widget.add_labels(keys_to_work)
+        self.rename_widget.add_labels(keys_to_work)
+        self.slice_widget.refresh(self.wf.data.index[0], self.wf.data.index[-1])
 
-    def saveData(self, path):
+    def save_data(self, path):
         """
         Save current data into a pickle file
         :param path: File path
         :return: Bool
         """
-        self.msg2Statusbar.emit("Saving data")
+        self.msg2statusbar.emit("Saving data")
         extension = path.split(".")[-1]
         # Init ok
-        ok = False
+        ok = False  # pylint: disable=C0103
         if extension == "nc":
             pass
         elif extension == "pkl":
-            ok = self.wf.to_pickle(path)
+            ok = self.wf.to_pickle(path)  # pylint: disable=C0103
         elif extension == "csv":
-            ok = self.wf.to_csv(path)
+            ok = self.wf.to_csv(path)  # pylint: disable=C0103
 
         if ok:
             self.msg2TextArea.emit("Data saved on file {}".format(path))
-            self.msg2Statusbar.emit("Ready")
+            self.msg2statusbar.emit("Ready")
         return ok
 
-    def dropData(self, labels, flagList, dropNaN):
+    def drop_data(self, labels, flag_list, drop_nan):
         """
         Delete some parameters from self.wf and refresh the lists
         :param labels: list of labels to drop
-        :param flagList: list of flags to drop
+        :param flag_list: list of flags to drop
         :return:
         """
         self.msg2TextArea.emit("Deleting data")
 
         # This is a trick, delete the list if is a list of None
-        if flagList[0] is None:
-            flagList = None
+        if flag_list[0] is None:
+            flag_list = None
 
-        if flagList:
-            self.wf.use_only(parameters=labels, flags=[0, 1], dropnan=dropNaN)
+        if flag_list:
+            self.wf.use_only(parameters=labels, flags=[0, 1], dropnan=drop_nan)
         else:
             # Delete the parameters
-            self.wf.drop(keys=labels, flags=flagList)
+            self.wf.drop(keys=labels, flags=flag_list)
         # Refresh the lists
-        self.addData(self.wf.data)
+        self.add_data(self.wf.data)
 
         # Delete plots with the key
         for label in labels:
-            for plotWidget in self.plot_widget_list:
-                if plotWidget.name == "QC":
-                    plotWidget.refreshPlot()
-                if label == plotWidget.name or label+"_" in \
-                   plotWidget.name or "_"+label in plotWidget.name:
-                    plotWidget.deleteLater()
-                    self.plot_widget_list.remove(plotWidget)
+            for plot_widget in self.plot_widget_list:
+                if plot_widget.name == "QC":
+                    plot_widget.refresh_plot()
+                if label == plot_widget.name or label+"_" in \
+                   plot_widget.name or "_"+label in plot_widget.name:
+                    plot_widget.deleteLater()
+                    self.plot_widget_list.remove(plot_widget)
 
         # Send message
         msg = ""
-        if flagList is None:
+        if flag_list is None:
             for label in labels:
                 if '_QC' in label:
                     continue
@@ -470,7 +471,7 @@ class PlotSplitter(QSplitter):
             msg += "deleted"
         else:
             msg += "Data with QC Flags "
-            for flag in flagList:
+            for flag in flag_list:
                 msg += "{}, ".format(flag)
             msg += "from "
             for label in labels:
@@ -479,164 +480,176 @@ class PlotSplitter(QSplitter):
                 msg += "{}, ".format(label)
             msg += "deleted"
         self.msg2TextArea.emit("\n{}".format(msg))
-        self.msg2Statusbar.emit(msg)
+        self.msg2statusbar.emit(msg)
 
-    def applyQC(self, listQC):
+    def apply_qc(self, list_qc):
         """
         Apply the QC procedures
-        :param listQC:
+        :param list_qc:
         :return:
         """
 
-        def doIt(key_in):
+        def do_it(key_in):
             """
             Common part, to not repeat code
             :param key_in: key to apply QC tests
             """
             if '_QC' in key_in:
                 return
-            if listQC[0]:
+            if list_qc[0]:
                 #  Reset flags
-                self.msg2Statusbar.emit(
-                    "Setting flags from {} to {}".format(key_in, listQC[0]))
-                self.wf.reset_flag(parameters=key_in, flag=int(listQC[0]))
-                self.msg2Statusbar.emit("Ready")
-            if listQC[3]:
+                self.msg2statusbar.emit(
+                    "Setting flags from {} to {}".format(key_in, list_qc[0]))
+                self.wf.reset_flag(parameters=key_in, flag=int(list_qc[0]))
+                self.msg2statusbar.emit("Ready")
+            if list_qc[3]:
                 # Spike test
-                threshold = float(listQC[4].replace(',', '.'))
-                self.msg2Statusbar.emit(
+                threshold = float(list_qc[4].replace(',', '.'))
+                self.msg2statusbar.emit(
                     "Applying spike test to "
                     "{}, with rolling window {} and threshold {}".format(
-                        key_in, listQC[5], threshold))
-                self.wf.spike_test(parameters=key_in, window=int(listQC[5]),
-                                   threshold=threshold, flag=int(listQC[3]))
-                self.msg2Statusbar.emit("Ready")
-            if listQC[1]:
+                        key_in, list_qc[5], threshold))
+                self.wf.spike_test(parameters=key_in, window=int(list_qc[5]),
+                                   threshold=threshold, flag=int(list_qc[3]))
+                self.msg2statusbar.emit("Ready")
+            if list_qc[1]:
                 # Range test
-                self.msg2Statusbar.emit(
+                self.msg2statusbar.emit(
                     "Applying range test to {}".format(key_in))
-                self.wf.range_test(parameters=key_in, flag=int(listQC[1]))
-                self.msg2Statusbar.emit("Ready")
-            if listQC[2]:
+                self.wf.range_test(parameters=key_in, flag=int(list_qc[1]))
+                self.msg2statusbar.emit("Ready")
+            if list_qc[2]:
                 # Flat test
-                self.msg2Statusbar.emit(
+                self.msg2statusbar.emit(
                     "Applying flat test to"
-                    " {}, with rolling window {}".format(key_in, listQC[5]))
-                self.wf.flat_test(parameters=key_in, window=int(listQC[5]),
-                                  flag=int(listQC[2]))
-                self.msg2Statusbar.emit("Ready")
-            if listQC[6]:
+                    " {}, with rolling window {}".format(key_in, list_qc[5]))
+                self.wf.flat_test(parameters=key_in, window=int(list_qc[5]),
+                                  flag=int(list_qc[2]))
+                self.msg2statusbar.emit("Ready")
+            if list_qc[6]:
                 # Flag to flag
-                self.msg2Statusbar.emit(
+                self.msg2statusbar.emit(
                     "Changing flags of "
-                    "{} from {} to {}".format(key_in, listQC[6], listQC[7]))
-                self.wf.flag2flag(parameters=key_in, original_flag=int(listQC[6]),
-                                  translated_flag=int(listQC[7]))
-                self.msg2Statusbar.emit("Ready")
+                    "{} from {} to {}".format(key_in, list_qc[6], list_qc[7]))
+                self.wf.flag2flag(parameters=key_in, original_flag=int(list_qc[6]),
+                                  translated_flag=int(list_qc[7]))
+                self.msg2statusbar.emit("Ready")
 
-        self.msg2Statusbar.emit("Creating QC flags")
+        self.msg2statusbar.emit("Creating QC flags")
 
-        if listQC[8] == 'all':
+        if list_qc[8] == 'all':
             for key in self.wf.parameters():
-                doIt(key_in=key)
+                do_it(key_in=key)
         else:
-            for i in range(8, len(listQC)):
-                key = listQC[i]
-                doIt(key_in=key)
+            for i in range(8, len(list_qc)):
+                key = list_qc[i]
+                do_it(key_in=key)
 
-        self.msg2Statusbar.emit("Updating graphs")
+        self.msg2statusbar.emit("Updating graphs")
         # Refresh the QC graph
-        for plotWidget in self.plot_widget_list:
-            if "QC" in plotWidget.name:
+        for plot_widget in self.plot_widget_list:
+            if "QC" in plot_widget.name:
 
-                if plotWidget.isVisible():
-                    plotWidget.refreshPlot()
+                if plot_widget.isVisible():
+                    plot_widget.refresh_plot()
                 # Show the QCBarPlot
-                elif plotWidget.name == "QC":
-                    plotWidget.refreshPlot()
-                    plotWidget.show()
-        self.msg2Statusbar.emit("Ready")
+                elif plot_widget.name == "QC":
+                    plot_widget.refresh_plot()
+                    plot_widget.show()
+        self.msg2statusbar.emit("Ready")
 
-    def applyRename(self, original_key, new_key):
+    def apply_rename(self, original_key, new_key):
         """It renames keys from a WaterFrame"""
         # Rename key from the Waterframe
-        self.msg2Statusbar.emit(
+        self.msg2statusbar.emit(
             "Changing name {} to {}".format(original_key, new_key))
         self.wf.rename(original_key, new_key)
         # Rename the key of the plotWidgets if it process
-        for plotWidget in self.plot_widget_list:
-            if isinstance(plotWidget.key, list):
-                for i, key in enumerate(plotWidget.key):
+        for plot_widget in self.plot_widget_list:
+            if isinstance(plot_widget.key, list):
+                for i, key in enumerate(plot_widget.key):
                     if key == original_key:
-                        plotWidget.key[i] = new_key
-                        plotWidget.name = plotWidget.name.replace(original_key,
-                                                                  new_key)
-                        plotWidget.refreshPlot()
+                        plot_widget.key[i] = new_key
+                        plot_widget.name = plot_widget.name.replace(original_key, new_key)
+                        plot_widget.refresh_plot()
             else:
-                if plotWidget.name == "QC":
-                    plotWidget.refreshPlot()
-                elif plotWidget.key == original_key:
-                    plotWidget.key = new_key
-                    plotWidget.name = new_key
-                    plotWidget.refreshPlot()
+                if plot_widget.name == "QC":
+                    plot_widget.refresh_plot()
+                elif plot_widget.key == original_key:
+                    plot_widget.key = new_key
+                    plot_widget.name = new_key
+                    plot_widget.refresh_plot()
         # Add data information into data_list
-        self.addData(self.wf.data)
-        self.msg2Statusbar.emit("Ready")
-        self.msg2TextArea.emit(
-            "Key name {} changed to {}.".format(original_key, new_key))
+        self.add_data(self.wf.data)
+        self.msg2statusbar.emit("Ready")
+        self.msg2TextArea.emit("Key name {} changed to {}.".format(original_key, new_key))
 
-    def applyResample(self, rule):
+    def apply_resample(self, rule):
         """
         It applies the resample function to  self.waterframe
         :param rule: Rule to resample.
         """
-        self.msg2Statusbar.emit("Resampling data")
+        self.msg2statusbar.emit("Resampling data")
         self.wf.resample(rule)
-        self.msg2Statusbar.emit("Ready")
+        self.msg2statusbar.emit("Ready")
 
-    def applySlice(self, start, stop):
+        self.msg2statusbar.emit("Updating graphs")
+        # Refresh the QC graph
+        for plot_widget in self.plot_widget_list:
+            if "QC" in plot_widget.name:
+
+                if plot_widget.isVisible():
+                    plot_widget.refresh_plot()
+                # Show the QCBarPlot
+                elif plot_widget.name == "QC":
+                    plot_widget.refresh_plot()
+                    plot_widget.show()
+        self.msg2statusbar.emit("Ready")
+
+    def apply_slice(self, start, stop):
         """
         It applies the resample function to  self.waterframe
         :param start: Start time.
         :param stop: Stop time
         """
-        self.msg2Statusbar.emit("Slicing data")
+        self.msg2statusbar.emit("Slicing data")
 
         self.wf.slice_time(start, stop)
 
-        self.addData(self.wf.data)
-        self.refreshPlots()
+        self.add_data(self.wf.data)
+        self.refresh_plots()
 
-        self.msg2Statusbar.emit("Ready")
+        self.msg2statusbar.emit("Ready")
         self.msg2TextArea.emit(
             "Dataframe sliced from {} to {}.".format(start, stop))
 
-    def graphClick(self, item):
+    def graph_click(self, item):
+        """Function on click the plot button"""
         if item.text() == "QC":
-            self.addQCBarPlot()
+            self.add_qc_bar_plot()
         elif item.text() == "Spectrogram":
-            self.addSpectroPlot()
+            self.add_spectro_plot()
 
-    def newWaterFrame(self):
+    def new_waterframe(self):
         """Create a new WaterFrame object and clean all screens."""
         self.wf = WaterFrame()
         # Delete all plots
-        for plotWidget in self.plot_widget_list:
-            plotWidget.deleteLater()
+        for plot_widget in self.plot_widget_list:
+            plot_widget.deleteLater()
         self.plot_widget_list.clear()
         # Hide the widget
         self.hide()
 
-    def refreshPlots(self):
+    def refresh_plots(self):
         """It refresh all plots"""
-        self.msg2Statusbar.emit("Refreshing plots")
+        self.msg2statusbar.emit("Refreshing plots")
 
-        for plotWidget in self.plot_widget_list:
+        for plot_widget in self.plot_widget_list:
             try:
-                plotWidget.refreshPlot()
+                plot_widget.refresh_plot()
             except KeyError:
-                self.plot_widget_list.remove(plotWidget)
-                plotWidget.hide()
-                plotWidget.deleteLater()
+                self.plot_widget_list.remove(plot_widget)
+                plot_widget.hide()
+                plot_widget.deleteLater()
 
-        self.msg2Statusbar.emit("Ready")
+        self.msg2statusbar.emit("Ready")

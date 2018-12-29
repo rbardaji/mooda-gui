@@ -56,8 +56,19 @@ class SliceWidget(QWidget):
 
     def send_times(self):
         """It emits a signal with start and end dates"""
-        self.sliceTimes.emit(self.start_date_time_edit.text(),
-                             self.end_date_time_edit.text())
+        debug = True
+        if debug:
+            print("- In SliceWidget.send_times()")
+
+        start = self.start_date_time_edit.dateTime()
+        end = self.end_date_time_edit.dateTime()
+        start_string = start.toString("yyyyMMddhhmmss")
+        end_string = end.toString("yyyyMMddhhmmss")
+
+        if debug:
+            print("sliceTimes emit:", start_string, end_string)
+
+        self.sliceTimes.emit(start_string, end_string)
 
     def refresh(self, start, end):
         """It refresh the parameters of self.start_date_time_edit and

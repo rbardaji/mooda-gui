@@ -54,23 +54,22 @@ class QCBarPlotWidget(QWidget):
         action_toolbar = QToolBar(self)
         # - Actions -
         apply_act = QAction(QIcon(path_icon+"refresh.png"), 'Refresh', self)
-        apply_act.triggered.connect(self.refreshPlot)
-        closeAct = QAction(QIcon(path_icon+"close.png"),
-                           'Close', self)
-        closeAct.triggered.connect(self.hide)
+        apply_act.triggered.connect(self.refresh_plot)
+        close_act = QAction(QIcon(path_icon+"close.png"), 'Close', self)
+        close_act.triggered.connect(self.hide)
         # - Format -
         action_toolbar.addAction(apply_act)
-        action_toolbar.addAction(closeAct)
+        action_toolbar.addAction(close_act)
 
         # Layout
         # - For the Widget
-        vPlot = QVBoxLayout()
-        vPlot.addWidget(self.plot_canvas)
-        vPlot.addWidget(plot_toolbar)
-        vPlot.addWidget(action_toolbar)
-        self.setLayout(vPlot)
+        v_plot = QVBoxLayout()
+        v_plot.addWidget(self.plot_canvas)
+        v_plot.addWidget(plot_toolbar)
+        v_plot.addWidget(action_toolbar)
+        self.setLayout(v_plot)
 
-    def refreshPlot(self):
+    def refresh_plot(self):
         """
         It refresh the plot according to the actions of the action_toolbar
         :return:
@@ -79,4 +78,4 @@ class QCBarPlotWidget(QWidget):
         self.axes.clear()
         self.wf.qcbarplot(ax=self.axes)
         plt.tight_layout()
-        self.plotCanvas.draw()
+        self.plot_canvas.draw()

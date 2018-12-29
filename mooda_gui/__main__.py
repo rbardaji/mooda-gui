@@ -1,7 +1,6 @@
 """This is the main module of of the mooda_gui. Here you have the code to load the GUI"""
 # pylint: disable=no-name-in-module
 # pylint: disable=import-error
-
 import sys
 from PyQt5.QtWidgets import QApplication
 from mooda_gui.widgets import MOODA

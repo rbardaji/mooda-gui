@@ -33,7 +33,7 @@ class MOODA(QMainWindow):
 
         # Plot Area
         self.plot_area = PlotSplitter()
-        self.plot_area.msg2Statusbar[str].connect(self.statusbar.showMessage)
+        self.plot_area.msg2statusbar[str].connect(self.statusbar.showMessage)
         self.plot_area.msg2TextArea[str].connect(self.datalog.write)
 
         # EGIM Downloader
@@ -49,7 +49,7 @@ class MOODA(QMainWindow):
         new_act = QAction(QIcon(path_icon+'\\new.png'), '&New project', self)
         new_act.setShortcut('Ctrl+N')
         new_act.setStatusTip('Clear the actual data frame to start a new one')
-        new_act.triggered.connect(self.plot_area.newWaterFrame)
+        new_act.triggered.connect(self.plot_area.new_waterframe)
         file_menu.addAction(new_act)
         # -- Open --
         open_act = QAction(QIcon(path_icon+'\\open.svg'), '&Open', self)
@@ -90,11 +90,11 @@ class MOODA(QMainWindow):
         qc_menu = QMenu('&QC', self)
         # --- Auto QC ---
         self.qc_auto_act = QAction(QIcon(path_icon+'\\qc.png'), '&Auto', self)
-        self.qc_auto_act.triggered.connect(self.plot_area.qcWidget.apply)
+        self.qc_auto_act.triggered.connect(self.plot_area.qc_widget.apply)
         qc_menu.addAction(self.qc_auto_act)
         # --- Preferences QC ---
         self.qc_preferences_act = QAction('&Preferences...', self)
-        self.qc_preferences_act.triggered.connect(self.plot_area.qcWidget.show)
+        self.qc_preferences_act.triggered.connect(self.plot_area.qc_widget.show)
         qc_menu.addAction(self.qc_preferences_act)
         data_menu.addMenu(qc_menu)
         # -- Delete parameters --
@@ -103,15 +103,15 @@ class MOODA(QMainWindow):
         data_menu.addAction(self.delete_act)
         # -- Rename parameters --
         self.rename_act = QAction(QIcon(path_icon+'\\rename.png'), 'Re&name parameters', self)
-        self.rename_act.triggered.connect(self.plot_area.renameWidget.show)
+        self.rename_act.triggered.connect(self.plot_area.rename_widget.show)
         data_menu.addAction(self.rename_act)
         # -- Resample data --
         self.resample_act = QAction(QIcon(path_icon+'\\resample.png'), 'Resam&ple data', self)
-        self.resample_act.triggered.connect(self.plot_area.resampleWidget.show)
+        self.resample_act.triggered.connect(self.plot_area.resample_widget.show)
         data_menu.addAction(self.resample_act)
         # -- Slice data --
         self.slice_act = QAction(QIcon(path_icon+'\\slice.png'), '&Slice data', self)
-        self.slice_act.triggered.connect(self.plot_area.sliceWidget.show)
+        self.slice_act.triggered.connect(self.plot_area.slice_widget.show)
         data_menu.addAction(self.slice_act)
 
         # - Menu View -
@@ -175,7 +175,7 @@ class MOODA(QMainWindow):
     def open_egim_downloader(self):
         """It shows the EgimDownloaderFrame."""
         self.egim_downloader.show()
-        if self.egim_downloader.egimList.count() == 0:
+        if self.egim_downloader.egim_list.count() == 0:
             # New frame
             self.egim_downloader.reload()
 
@@ -195,7 +195,7 @@ class MOODA(QMainWindow):
 
         # Send the path to the PlotFrame to be opened
         if file_name:
-            ok = self.plot_area.openData(file_name, concat)  # pylint: disable=C0103
+            ok = self.plot_area.open_data(file_name, concat)  # pylint: disable=C0103
             if ok:
                 # Show plot area
                 self.plot_area.show()

@@ -1,3 +1,7 @@
+"""Here you have the widget show time series"""
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+
 import os
 from numpy import timedelta64
 import seaborn as sms
@@ -18,9 +22,9 @@ class TSPlotWidget(QWidget):
     """
 
     # Signals
-    msg2Statusbar = pyqtSignal(str)
+    msg2statusbar = pyqtSignal(str)
 
-    def __init__(self, wf, keys, right=None):
+    def __init__(self, wf, keys, right=None):  # pylint: disable=C0103
         """
         Constructor
         :param wf: inWater WaterFrame object
@@ -29,7 +33,7 @@ class TSPlotWidget(QWidget):
         super().__init__()
 
         # Instance variables
-        self.wf = wf
+        self.wf = wf  # pylint: disable=C0103
         self.key = keys
         # Name of this object
         self.name = "_".join(keys)
@@ -44,7 +48,7 @@ class TSPlotWidget(QWidget):
             size = len(self.wf.data[key].dropna().index)
             date_period = self.wf.data[key].index[-1] - self.wf.data[
                 key].index[0]
-            date_period = date_period / timedelta64(1, 'h')
+            date_period = date_period / timedelta64(1, 'h')  # pylint: disable=E1121
             if max_size < size:
                 max_size = size
             if max_hour < date_period:
@@ -83,28 +87,27 @@ class TSPlotWidget(QWidget):
         if self.right is None:
             sms.despine()
 
-        self.initUI()
+        self.init_ui()
 
         self.average.setCurrentText(average_text)
 
-    def initUI(self):
-
+    def init_ui(self):
+        """Layout and main functionalities"""
         path_icon = str(
-            os.path.dirname(os.path.abspath(__file__))) + \
-                    "\\..\\icon\\"
+            os.path.dirname(os.path.abspath(__file__))) + "\\..\\icon\\"
 
         # Canvas
-        self.plotCanvas = FigureCanvas(self.fig)
-        self.plotCanvas.draw()
+        self.plot_canvas = FigureCanvas(self.fig)
+        self.plot_canvas.draw()
 
         # Matplotlib toolbar
-        plotToolbar = NavigationToolbar(self.plotCanvas, self)
+        plot_toolbar = NavigationToolbar(self.plot_canvas, self)
 
         # Custom Toolbar
-        actionToolbar = QToolBar(self)
+        action_toolbar = QToolBar(self)
         # - Labels -
-        rollingLabel = QLabel("Moving window: ")
-        averageLabel = QLabel("  Average time: ")
+        rolling_label = QLabel("Moving window: ")
+        average_label = QLabel("  Average time: ")
         # - Spin Box -
         self.rolling = QSpinBox(self)
         self.rolling.setMinimum(0)
@@ -119,36 +122,34 @@ class TSPlotWidget(QWidget):
             ["None", "Minutely", "Hourly", "Daily", "Weekly"])
         self.average.setToolTip("")
         # - Actions -
-        applyAct = QAction(QIcon(path_icon+"apply.png"),
-                           'Apply', self)
-        applyAct.triggered.connect(self.refreshPlot)
-        closeAct = QAction(QIcon(path_icon+"close.png"),
-                           'Close', self)
-        closeAct.triggered.connect(self.hide)
+        apply_act = QAction(QIcon(path_icon+"apply.png"), 'Apply', self)
+        apply_act.triggered.connect(self.refresh_plot)
+        close_act = QAction(QIcon(path_icon+"close.png"), 'Close', self)
+        close_act.triggered.connect(self.hide)
         # - Format -
-        actionToolbar.addWidget(rollingLabel)
-        actionToolbar.addWidget(self.rolling)
-        actionToolbar.addWidget(averageLabel)
-        actionToolbar.addWidget(self.average)
-        actionToolbar.addAction(applyAct)
-        actionToolbar.addSeparator()
-        actionToolbar.addAction(closeAct)
+        action_toolbar.addWidget(rolling_label)
+        action_toolbar.addWidget(self.rolling)
+        action_toolbar.addWidget(average_label)
+        action_toolbar.addWidget(self.average)
+        action_toolbar.addAction(apply_act)
+        action_toolbar.addSeparator()
+        action_toolbar.addAction(close_act)
 
         # Layout
         # - For the Widget
-        vPlot = QVBoxLayout()
-        vPlot.addWidget(self.plotCanvas)
-        vPlot.addWidget(plotToolbar)
-        vPlot.addWidget(actionToolbar)
-        self.setLayout(vPlot)
+        v_plot = QVBoxLayout()
+        v_plot.addWidget(self.plot_canvas)
+        v_plot.addWidget(plot_toolbar)
+        v_plot.addWidget(action_toolbar)
+        self.setLayout(v_plot)
 
-    def refreshPlot(self):
+    def refresh_plot(self):
         """
-        It refresh the plot according to the actions of the actionToolbar
+        It refresh the plot according to the actions of the action_toolbar
         :return:
         """
 
-        self.msg2Statusbar.emit("Making figure")
+        self.msg2statusbar.emit("Making figure")
 
         # Remove previous axes from the figure
         self.axes.cla()
@@ -191,8 +192,8 @@ class TSPlotWidget(QWidget):
         if self.right is None:
             sms.despine()
 
-        self.plotCanvas.draw()
+        self.plot_canvas.draw()
 
-        self.msg2Statusbar.emit("Ready")
+        self.msg2statusbar.emit("Ready")
 
         print("Done")

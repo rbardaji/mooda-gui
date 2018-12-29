@@ -11,8 +11,7 @@ from matplotlib.backends.backend_qt5agg import \
     NavigationToolbar2QT as NavigationToolbar
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (QAction, QComboBox, QLabel, QSpinBox, QToolBar,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QAction, QToolBar, QVBoxLayout, QWidget)
 
 
 class HistoPlotWidget(QWidget):
@@ -23,7 +22,7 @@ class HistoPlotWidget(QWidget):
     # Signals
     msg2Statusbar = pyqtSignal(str)
 
-    def __init__(self, wf, keys):
+    def __init__(self, wf, keys):  # pylint: disable=C0103
         """
         Constructor
         :param wf: inWater WaterFrame object
@@ -32,7 +31,7 @@ class HistoPlotWidget(QWidget):
         super().__init__()
 
         # Instance variables
-        self.wf = wf
+        self.wf = wf  # pylint: disable=C0103
         self.key = keys
         # Name of this object
         self.name = "_".join(keys)
@@ -45,41 +44,38 @@ class HistoPlotWidget(QWidget):
         plt.tight_layout()
         sms.despine()
 
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
-
-        path_icon = str(
-            os.path.dirname(os.path.abspath(__file__))) + \
-                    "\\..\\icon\\"
+    def init_ui(self):
+        """Layout and main functionality"""
+        path_icon = str(os.path.dirname(os.path.abspath(__file__))) + "\\..\\icon\\"
 
         # Canvas
-        self.plotCanvas = FigureCanvas(self.fig)
-        self.plotCanvas.draw()
+        self.plot_canvas = FigureCanvas(self.fig)
+        self.plot_canvas.draw()
 
         # Matplotlib toolbar
-        plotToolbar = NavigationToolbar(self.plotCanvas, self)
+        plot_toolbar = NavigationToolbar(self.plot_canvas, self)
 
         # Custom Toolbar
-        actionToolbar = QToolBar(self)
+        action_toolbar = QToolBar(self)
         # - Actions -
-        closeAct = QAction(QIcon(path_icon+"close.png"),
-                           'Close', self)
-        closeAct.triggered.connect(self.hide)
+        close_act = QAction(QIcon(path_icon+"close.png"), 'Close', self)
+        close_act.triggered.connect(self.hide)
         # - Format -
-        actionToolbar.addAction(closeAct)
+        action_toolbar.addAction(close_act)
 
         # Layout
         # - For the Widget
-        vPlot = QVBoxLayout()
-        vPlot.addWidget(self.plotCanvas)
-        vPlot.addWidget(plotToolbar)
-        vPlot.addWidget(actionToolbar)
-        self.setLayout(vPlot)
+        v_plot = QVBoxLayout()
+        v_plot.addWidget(self.plot_canvas)
+        v_plot.addWidget(plot_toolbar)
+        v_plot.addWidget(action_toolbar)
+        self.setLayout(v_plot)
 
-    def refreshPlot(self):
+    def refresh_plot(self):
         """
-        It refresh the plot according to the actions of the actionToolbar
+        It refresh the plot according to the actions of the action_toolbar
         :return:
         """
 
@@ -126,7 +122,7 @@ class HistoPlotWidget(QWidget):
         if self.right is None:
             sms.despine()
 
-        self.plotCanvas.draw()
+        self.plot_canvas.draw()
 
         self.msg2Statusbar.emit("Ready")
 

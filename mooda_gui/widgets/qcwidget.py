@@ -56,7 +56,7 @@ class QCWidget(QWidget):
 
         # Spin box
         self.original_spin_box = QSpinBox(self)
-        self.original_spinBox.setMinimum(0)
+        self.original_spin_box.setMinimum(0)
         self.original_spin_box.setMaximum(9)
         self.original_spin_box.setValue(0)
         # -
@@ -174,12 +174,17 @@ class QCWidget(QWidget):
         """
         Emit a signal with the current QC settings
         """
+
+        debug = True  # Print debug info
+        if debug:
+            print("- In QCWidget.apply()")
+
         settings = []
         if self.reset_check.isChecked():
             settings.append(self.reset_spin_box.text())
         else:
             settings.append(None)
-        if self.rangeCheck.isChecked():
+        if self.range_check.isChecked():
             settings.append(self.bad_range_spin_box.text())
         else:
             settings.append(None)
@@ -206,6 +211,8 @@ class QCWidget(QWidget):
                 item = self.key_list.item(index)
                 if item.checkState():
                     settings.append(item.text())
+        if debug:
+            print("list2qc.emit:", settings)
 
         self.list2qc.emit(settings)
 
