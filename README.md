@@ -8,10 +8,10 @@ The GUI is written with pyQT but it designed for non-python users.
 
 # Where to get it
 
-Binary installers for the latest released stable version are available at the [Python package index](https://pypi.org/project/mooda_gui/)
+Binary installers for the latest released stable version are available at the [Python package index](https://pypi.org/project/mooda_gui/).
 
 ```cmd
-pip install mooda_gui
+pip install mooda-gui
 ```
 
 See more [instructions](docs/installation/installation.md) for installation from sources or non-PyPi releases.
