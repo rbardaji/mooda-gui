@@ -29,7 +29,7 @@ AUTHOR = 'Raul Bardaji Benach'
 AUTHOR_EMAIL = 'rbardaji@gmail.com'
 LICENSE = 'MIT'
 PACKAGES = find_packages()
-requirements = ['requirements-mooda-gui.txt']
+requirements = ['requirements-mooda-gui.txt']  # pylint: disable=C0103
 INSTALL_REQUIRES = sorted(
     set(
         line.partition('#')[0].strip()
