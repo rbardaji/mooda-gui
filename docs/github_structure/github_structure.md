@@ -18,13 +18,13 @@ Most of the files that are in the root contain specific code for the configurati
 * [LICENSE](https://github.com/rbardaji/mooda-gui/blob/master/LICENSE): Public repositories on GitHub are often used to share open source software. We use an MIT License.
 * [MANIFEST.in](https://github.com/rbardaji/mooda-gui/blob/master/MANIFEST.in): It is used to collect all the files that will go into the final installer.
 * [README.md](https://github.com/rbardaji/mooda-gui/blob/master/README.md): Contains the text that you see on the repository [home page](https://github.com/rbardaji/mooda-gui).
-* [requirements-mooda_gui.txt](requirements-mooda_gui.txt): List of required python libraries to execute mooda-gui.
+* [requirements-mooda_gui.txt](https://github.com/rbardaji/mooda-gui/blob/master/requirements-mooda_gui.txt): List of required python libraries to execute mooda-gui.
 * [setup.cfg](https://github.com/rbardaji/mooda-gui/blob/master/setup.cfg): It contains package metadata.
 * [setup.py](https://github.com/rbardaji/mooda-gui/blob/master/setup.py): It is the python code to install the package into a python environment.
 
 The directories contain the following information:
 
-* [docs](https://github.com/rbardaji/mooda-gui/tree/master/docs): It contains the mooda documentation.
+* [docs](https://github.com/rbardaji/mooda-gui/tree/master/docs): It contains the mooda_gui documentation.
 * [mooda_gui](https://github.com/rbardaji/mooda-gui/tree/master/mooda_gui): **It contains the mooda_gui python package.**
 * [icon](https://github.com/rbardaji/mooda-gui/tree/master/mooda_gui/icon): It contains the icons used in the GUI.
 * [widgets](https://github.com/rbardaji/mooda-gui/tree/master/mooda_gui/icon): Here you have the modules that create the pyqt5 widgets of the GUI.
