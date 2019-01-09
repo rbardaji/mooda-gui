@@ -184,6 +184,7 @@ class PlotSplitter(QSplitter):
         if self.correlation_radio_button.isChecked():
             plot_widget = ScatterMatrixPlotWidget(wf=self.wf, keys=keys)
             self.addWidget(plot_widget)
+            self.msg2statusbar.emit("Ready")
             return
 
         # Create name of the plot
@@ -276,8 +277,16 @@ class PlotSplitter(QSplitter):
             True/False: bool
                 It indicates if the operation is ok.
         """
+        debug = True  # Variable for debug reasons
+
+        if debug:
+            print("In PlotSplitter.open_data():")
+            print("  - Emit msg2statusbar: Opening data")
+
         self.msg2statusbar.emit("Opening data")
         if isinstance(path, str):
+            if debug:
+                print("  - path is a string:", path)
             # Obtain type of file
             extension = path.split(".")[-1]
             # Init ok
@@ -303,13 +312,21 @@ class PlotSplitter(QSplitter):
                 # Plot QC
                 self.add_qc_bar_plot()
                 self.msg2statusbar.emit("Ready")
+                if debug:
+                    print("  - Emit msg2statusbar: Ready")
+                    print("  - Exit from PlotSplitter.open_data()")
                 return True
             else:
                 self.msg2statusbar.emit("Error opening data")
+                if debug:
+                    print("  - Emit msg2statusbar: Error opening data")
+                    print("  - Exit from PlotSplitter.open_data()")
                 return False
         else:
             # Path is a WaterFrame
-
+            if debug:
+                print("  - path is a WaterFrame")
+                print(path)
             # Check if there is no data in the waterframe
             if path.data.empty:
                 return False
@@ -323,6 +340,8 @@ class PlotSplitter(QSplitter):
             # Add data information into data_list
             self.add_data(self.wf.data)
             self.add_metadata(self.wf.metadata)
+            # Add other information
+            self.other_info_plain_text.setPlainText(repr(self.wf))
             # Plot QC
             self.add_qc_bar_plot()
             return True
