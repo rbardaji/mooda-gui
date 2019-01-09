@@ -18,6 +18,6 @@ Data -> Resample
 
 ![Resample data](../img/examples/resample-obsea-data.PNG)
 
-Finally, select "Correlation" in the Plot properties, select PSAL, CNDC and TEMP (press Ctrl to select them) and click the Plot button.
+Finally, select "Correlation" in the Plot properties, select PSAL, CNDC and TEMP (press Ctrl to pick them) and click the Plot button.
 
 ![Correlation](../img/examples/correlation-temp-psal-cond.PNG)
