@@ -10,7 +10,7 @@ File -> Open
 
 ![Open OBSEA data](../img/examples/open-obsea-data.PNG)
 
-The file is quit big so, we are going to resample data hourly (averaging the measurements of each hour). Go to:
+The file is quite big so, we are going to resample data hourly (averaging the measurements of each hour). Go to:
 
 ```cmd
 Data -> Resample
